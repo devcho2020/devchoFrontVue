@@ -1,0 +1,106 @@
+<script setup>
+
+import {useRoute, useRouter} from "vue-router";
+import {onMounted, ref} from "vue";
+import api from "@/api/index.js";
+import CommonTextarea from "@/components/common/CommonTextarea.vue";
+import CommonButton from "@/components/common/CommonButton.vue";
+import CommonInput from "@/components/common/CommonInput.vue";
+import CommonModal from "@/components/common/CommonModal.vue";
+import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+
+  const router = useRouter();
+  const route = useRoute();
+  const freeBoardId = route.params.id;
+  const freeBoard = ref({});
+  const isLoading = ref(false);
+  const isShowModal = ref(false);
+
+const fnMoveFreeBoardList = () => {
+  router.push({
+    path: `/free-board`,
+    query: route.query
+  })
+};
+
+const fnMoveFreeBoardUpdate = () => {
+  router.push({
+    path: `/free-board/update/${freeBoardId}`,
+    query: route.query
+  })
+};
+
+  const fnGetFreeBoardDetail = async () => {
+    if (isLoading.value) return;
+
+    try {
+      isLoading.value = true;
+      const response = await api.get(`/free-board/${freeBoardId}`);
+      freeBoard.value = response.data
+    } catch (e) {
+      console.error(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  onMounted(() => {
+    fnGetFreeBoardDetail();
+  })
+</script>
+
+<template>
+  <div class="mx-auto space-y-6">
+    <div class="flex justify-end gap-3">
+      <commonButton @click="fnMoveFreeBoardList" variant="gray">
+        목록
+      </commonButton>
+      <commonButton @click="fnMoveFreeBoardUpdate" variant="primary">
+        수정
+      </commonButton>
+    </div>
+    <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-8 space-y-6">
+      <div class="w-full">
+        <div class="flex justify-between pb-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Title</label>
+          <span class="text-ls font-bold">
+            <CommonDateFormat :date="String(freeBoard.updatedAt || freeBoard.createdAt)" format="YYYY년 MM월 DD일"/>
+            {{ freeBoard.updatedAt ? '수정' : '작성' }}
+          </span>
+        </div>
+        <CommonInput
+            v-model="freeBoard.title"
+            @labelStr=""
+            :disabled="true"
+            placeholder="에러 명칭 또는 요약된 제목을 입력하세요"
+            :maxlength="Number(80)"
+        />
+      </div>
+
+      <div class="w-full">
+        <div class="pb-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest ">Content</label>
+        </div>
+        <CommonTextarea
+            v-model="freeBoard.content"
+            :rows="Number(12)"
+            :maxLength="Number(300)"
+            :disabled="true"
+            placeholder="에러 원인, 해결 방법, 참고 코드 등을 자유롭게 적어주세요."
+        />
+      </div>
+    </div>
+  </div>
+
+  <CommonModal
+      v-model="isShowModal"
+      title="잘못된 접근입니다"
+      message="존재하지 않는 에러 로그입니다"
+      :outSideClose="false"
+      @confirm="() => {router.push({path: `/error-log`, query: route.query})}"
+  />
+</template>
+
+<style scoped>
+
+</style>
