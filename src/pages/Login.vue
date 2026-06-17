@@ -5,6 +5,7 @@ import {onMounted, reactive, ref} from 'vue';
   import api from "@/api/index.js";
   import {useAuthStore} from "@/stores/auth.js";
   import CommonButton from "@/components/common/CommonButton.vue";
+import CommonInput from "@/components/common/CommonInput.vue";
 
   const loginModal = reactive({
     title: '로그인 실패',
@@ -24,51 +25,57 @@ import {onMounted, reactive, ref} from 'vue';
 
   const isShowModal = ref(false);
 
+  const loginForm = ref({
+    loginId: '',
+    loginPassword: ''
+  });
+
+  const loginIdRef = ref(null);
+  const loginPasswordRef = ref(null);
+
+  const isSubmitting = ref(false);
+
   const loginNullModal = () => {
     loginModal.title = '로그인 실패';
     loginModal.message = '아이디 또는 비밀번호를 입력해 주세요';
     loginModal.confirmText = '확인';
     loginModal.cancelText = '';
-    loginModal.confirm = null;
+    loginModal.confirm = () => {
+      if (loginForm.value?.loginId) {
+        loginPasswordRef.value?.focus();
+      } else {
+        loginIdRef.value?.focus();
+      }
+    };
     loginModal.cancel = null;
     loginModal.type = 'alert';
 
     isShowModal.value = true;
   }
 
-const loginFailModal = (failMsg) => {
-  loginModal.title = '로그인 실패';
-  loginModal.message = failMsg;
-  loginModal.confirmText = '확인';
-  loginModal.cancelText = '';
-  loginModal.confirm = null;
-  loginModal.cancel = null;
-  loginModal.type = 'alert';
+  const loginFailModal = (failMsg) => {
+    loginModal.title = '로그인 실패';
+    loginModal.message = failMsg;
+    loginModal.confirmText = '확인';
+    loginModal.cancelText = '';
+    loginModal.confirm = () => {loginPasswordRef.value?.focus();};
+    loginModal.cancel = null;
+    loginModal.type = 'alert';
 
-  isShowModal.value = true;
-}
+    isShowModal.value = true;
+  }
 
-const loginSuccessModal = () => {
-  loginModal.title = '로그인 성공';
-  loginModal.message = '로그인 되었습니다';
-  loginModal.confirmText = '확인';
-  loginModal.cancelText = '';
-  loginModal.confirm = () => {router.replace(backUrl)};
-  loginModal.cancel = null;
-  loginModal.type = 'alert';
+  const loginSuccessModal = () => {
+    loginModal.title = '로그인 성공';
+    loginModal.message = '로그인 되었습니다';
+    loginModal.confirmText = '확인';
+    loginModal.cancelText = '';
+    loginModal.confirm = () => {router.replace(backUrl)};
+    loginModal.cancel = null;
+    loginModal.type = 'alert';
 
-  isShowModal.value = true;
-}
-
-
-
-  // 폼 데이터 상태 선언 (자바 객체 바인딩 느낌)
-  const loginForm = ref({
-    loginId: '',
-    loginPassword: ''
-  });
-
-  const isSubmitting = ref(false);
+    isShowModal.value = true;
+  }
 
   // 로그인 실행 함수
   const fnLogin = async () => {
@@ -98,6 +105,8 @@ const loginSuccessModal = () => {
 
   onMounted(() => {
     if (authStore.accessToken) router.replace(backUrl);
+
+    loginIdRef.value?.focus();
   })
 
 </script>
@@ -110,11 +119,12 @@ const loginSuccessModal = () => {
       <div class="pb-2">
         <label class="block text-sm font-medium text-slate-400 mb-1">Username</label>
       </div>
-      <input
+      <CommonInput
           v-model="loginForm.loginId"
+          ref="loginIdRef"
+          inputRef="loginIdRef"
           type="text"
-          maxlength="20"
-          class="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500"
+          :maxlength="20"
           placeholder="아이디를 입력하세요"
       />
     </div>
@@ -123,12 +133,11 @@ const loginSuccessModal = () => {
       <div class="pb-2">
         <label class="block text-sm font-medium text-slate-400 mb-1">Password</label>
       </div>
-      <input
+      <CommonInput
           v-model="loginForm.loginPassword"
+          ref="loginPasswordRef"
           type="password"
           maxlength="20"
-          autoComplete="off"
-          class="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500"
           placeholder="비밀번호를 입력하세요"
       />
     </div>

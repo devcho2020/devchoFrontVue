@@ -1,6 +1,6 @@
 <script setup>
 
-  import {computed} from "vue";
+import {computed, ref} from "vue";
 
   const props = defineProps({
     modelValue: [String, Number],
@@ -16,11 +16,11 @@
       type: Boolean,
       default: false
     },
-    fnKeyUp: {
-      type: function () {
+  });
 
-      }
-    }
+  const inputFocusRef = ref(null);
+  defineExpose({
+    focus: () => inputFocusRef.value?.focus()
   });
 
   const validLabel = computed(() => {
@@ -48,6 +48,7 @@
     </span>
     <input
         :type="inputType"
+        ref="inputFocusRef"
         :value="modelValue"
         @input="handleInput"
         @keyup.enter="emit('enter')"
@@ -56,7 +57,7 @@
         :disabled="disabled"
         :class="validLabel.length > 0 ? 'pl-16' : 'pl-4'"
         autoComplete="off"
-        class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2  pr-4 text-sm text-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono"
+        class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2  pr-4 text-sm text-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono"
     />
   </div>
 </template>
