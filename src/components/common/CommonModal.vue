@@ -1,28 +1,28 @@
 <script setup>
   /** example */
-  const modalStore = useModalStore();
-  const { isShowModal, modalConfig } = storeToRefs(modalStore);
-  modalStore.openModal({
-    title: '권한없음',
-    message: '로그인 후 이용해 주세요',
-    confirmText: '확인',
-    cancelText: '',
-    type: 'confirm',
-    confirm: null,
-    cancel: null,
-    outSideClose: true
-  })
-  <CommonModal
-  v-model="isShowModal"
-  :title="modalConfig.title"
-  :message="modalConfig.message"
-  :confirmText="modalConfig.confirmText"
-  :cancelText="modalConfig.cancelText"
-  :outSideClose="modalConfig.outSideClose"
-  :type="modalConfig.type"
-  @confirm="modalConfig.confirm"
-  @cancel="modalConfig.cancel"
-      />
+  // const modalStore = useModalStore();
+  // const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  // modalStore.openModal({
+  //   title: '권한없음',
+  //   message: '로그인 후 이용해 주세요',
+  //   confirmText: '확인',
+  //   cancelText: '',
+  //   type: 'confirm',
+  //   confirm: null,
+  //   cancel: null,
+  //   outSideClose: true
+  // })
+  // <CommonModal
+  // v-model="isShowModal"
+  // :title="modalConfig.title"
+  // :message="modalConfig.message"
+  // :confirmText="modalConfig.confirmText"
+  // :cancelText="modalConfig.cancelText"
+  // :outSideClose="modalConfig.outSideClose"
+  // :type="modalConfig.type"
+  // @confirm="modalConfig.confirm"
+  // @cancel="modalConfig.cancel"
+  //     />
 
 
   const props = defineProps({
