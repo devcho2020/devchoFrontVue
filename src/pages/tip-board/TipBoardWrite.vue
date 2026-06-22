@@ -1,91 +1,86 @@
 <script setup>
-import CommonTextarea from "@/components/common/CommonTextarea.vue";
-import CommonButton from "@/components/common/CommonButton.vue";
-import CommonInput from "@/components/common/CommonInput.vue";
-import CommonModal from "@/components/common/CommonModal.vue";
-import {useRoute, useRouter} from "vue-router";
-import {computed, reactive, ref} from "vue";
-import api from "@/api/index.js";
+  import CommonTextarea from "@/components/common/CommonTextarea.vue";
+  import CommonButton from "@/components/common/CommonButton.vue";
+  import CommonInput from "@/components/common/CommonInput.vue";
+  import CommonModal from "@/components/common/CommonModal.vue";
+  import {useRoute, useRouter} from "vue-router";
+  import {computed, reactive, ref} from "vue";
+  import api from "@/api/index.js";
+  import {useModalStore} from "@/stores/modal.js";
+  import {storeToRefs} from "pinia";
 
-const router = useRouter();
-const route = useRoute();
+  const router = useRouter();
+  const route = useRoute();
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
 
-const tipBoardWriteModal = reactive({
-  title: '',
-  message: '',
-  confirmText: '',
-  cancelText: '',
-  confirm: null,
-  cancel: null,
-  type: 'confirm',
-  outSideClose: true
-});
+  const tipBoardId = ref(null);
+  const isLoading = ref(false);
+  const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
 
-const tipBoardId = ref(null);
-const isShowModal = ref(false);
-const isLoading = ref(false);
-const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
+  const form = reactive({
+    title: '',
+    content: ''
+  })
 
-const form = reactive({
-  title: '',
-  content: ''
-})
-
-const fnModalCancel = () => {
-  tipBoardWriteModal.title = '작성 취소';
-  tipBoardWriteModal.message = '팁 게시판 작성을 취소하시겠습니까?';
-  tipBoardWriteModal.confirmText = '목록';
-  tipBoardWriteModal.cancelText = '닫기';
-  tipBoardWriteModal.confirm = () => {router.push({path: '/tip-board', query: route.query})};
-  tipBoardWriteModal.cancel = null;
-  isShowModal.value = true
-}
-
-const fnModalConfirm = () => {
-  if (!validationSubmit) {
-    return
+  const fnModalCancel = () => {
+    modalStore.openModal({
+      title: '작성 취소',
+      message: '팁 게시판 작성을 취소하시겠습니까?',
+      confirmText: '목록',
+      cancelText: '닫기',
+      type: 'confirm',
+      confirm: () => {router.push({path: '/tip-board', query: route.query})},
+      cancel: null,
+      outSideClose: true
+    })
   }
 
-  tipBoardWriteModal.title = '입력 완료';
-  tipBoardWriteModal.message = '입력하신 팁 게시판 내용을 저장하시겠습니까?';
-  tipBoardWriteModal.confirmText = '저장';
-  tipBoardWriteModal.cancelText = '닫기';
-  tipBoardWriteModal.confirm = fnSaveTipBoard;
-  tipBoardWriteModal.cancel = null;
-
-  isShowModal.value = true
-}
-
-const fnModalSave = () => {
-
-  tipBoardWriteModal.title = '작성 완료';
-  tipBoardWriteModal.message = '팁 게시판 작성이 완료되었습니다';
-  tipBoardWriteModal.confirmText = '확인';
-  tipBoardWriteModal.confirm = () => {router.push({path: `/tip-board/${tipBoardId.value}`, query: route.query})};
-  tipBoardWriteModal.type = 'alert';
-  tipBoardWriteModal.outSideClose = false;
-
-  isShowModal.value = true
-}
-
-const fnSaveTipBoard = async () => {
-  if (isLoading.value) return;
-
-  try {
-    isLoading.value = true;
-
-    const response = await api.post('/tip-board', form);
-    tipBoardId.value = response.data;
-
-    fnModalSave();
-
-  } catch (e) {
-    console.error(e);
-  } finally {
-    isLoading.value = false;
+  const fnModalConfirm = () => {
+    if (!validationSubmit) {
+      return
+    }
+    modalStore.openModal({
+      title: '입력 완료',
+      message: '입력하신 팁 게시판 내용을 저장하시겠습니까?',
+      confirmText: '저장',
+      cancelText: '닫기',
+      type: 'confirm',
+      confirm: () => fnSaveTipBoard,
+      cancel: null,
+      outSideClose: true
+    })
   }
 
-}
+  const fnModalSave = () => {
+    modalStore.openModal({
+      title: '작성 완료',
+      message: '팁 게시판 작성이 완료되었습니다',
+      confirmText: '확인',
+      type: 'alert',
+      confirm: () => {router.push({path: `/tip-board/${tipBoardId.value}`, query: route.query})},
+      outSideClose: false
+    })
+  }
+
+  const fnSaveTipBoard = async () => {
+    if (isLoading.value) return;
+
+    try {
+      isLoading.value = true;
+
+      const response = await api.post('/tip-board', form);
+      tipBoardId.value = response.data;
+
+      fnModalSave();
+
+    } catch (e) {
+      console.error(e);
+    } finally {
+      isLoading.value = false;
+    }
+
+  }
 </script>
 
 <template>
@@ -121,14 +116,14 @@ const fnSaveTipBoard = async () => {
 
   <CommonModal
       v-model="isShowModal"
-      :title="tipBoardWriteModal.title"
-      :message="tipBoardWriteModal.message"
-      :confirmText="tipBoardWriteModal.confirmText"
-      :cancelText="tipBoardWriteModal.cancelText"
-      :outSideClose="tipBoardWriteModal.outSideClose"
-      @cancel="tipBoardWriteModal.cancel"
-      @confirm="tipBoardWriteModal.confirm"
-      :type="tipBoardWriteModal.type"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>
 

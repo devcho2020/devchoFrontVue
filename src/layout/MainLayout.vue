@@ -1,18 +1,19 @@
 <script setup>
   import {useRoute, useRouter} from "vue-router";
-  import {computed, reactive, ref} from "vue";
+  import {computed} from "vue";
   import {COMMON_MAIN_MENU} from "@/components/common/CommonMainMenu.vue"
   import CommonButton from "@/components/common/CommonButton.vue";
   import {useAuthStore} from "@/stores/auth.js";
   import CommonModal from "@/components/common/CommonModal.vue";
   import {storeToRefs} from "pinia";
+  import {useModalStore} from "@/stores/modal.js";
 
   const route = useRoute();
   const router = useRouter();
   const authStore = useAuthStore();
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
   const { accessToken, user: userInfo } = storeToRefs(authStore);
-
-  const isShowModal = ref(false);
 
   const mainMenuList = computed(() => {
     return COMMON_MAIN_MENU.filter((mainMenu) => {
@@ -24,37 +25,26 @@
     })
   })
 
-  const mainModal = reactive({
-    title: '',
-    message: '',
-    confirmText: '',
-    cancelText: '',
-    confirm: null,
-    cancel: null,
-    type: 'confirm',
-    outSideClose: true
-  });
-
   const pageTitle = computed(() => route.meta.title || '');
   const pageSubTitle = computed(() => route.meta.subTitle || '');
   const paths = computed(() => route.path === '/' ? '' : route.path);
 
   
   const fnLogout = () => {
-
-    mainModal.title = '로그아웃';
-    mainModal.message = '로그아웃 하시겠습니까?';
-    mainModal.confirmText = '로그아웃';
-    mainModal.type = 'confirm'
-    mainModal.confirm = () => {
-      authStore.logout();
-      router.go(0);
-    };
-    mainModal.cancelText = '취소'
-    mainModal.cancel = null;
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '로그아웃',
+      message: '로그아웃 하시겠습니까?',
+      confirmText: '로그아웃',
+      cancelText: '취소',
+      type: 'confirm',
+      confirm: () => {
+        authStore.logout();
+        router.push(`/login`);
+      },
+      cancel: null,
+      outSideClose: false
+    })
   }
-
 </script>
 
 <template>
@@ -118,14 +108,14 @@
 
   <CommonModal
       v-model="isShowModal"
-      :title="mainModal.title"
-      :message="mainModal.message"
-      :confirmText="mainModal.confirmText"
-      :cancelText="mainModal.cancelText"
-      :outSideClose="mainModal.outSideClose"
-      @cancel="mainModal.cancel"
-      @confirm="mainModal.confirm"
-      :type="mainModal.type"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>
 

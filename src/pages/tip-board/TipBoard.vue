@@ -1,88 +1,87 @@
 <script setup>
+    import {reactive, ref, watch} from "vue";
+    import {useRoute, useRouter} from "vue-router";
+    import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
+    import CommonInput from "@/components/common/CommonInput.vue";
+    import CommonButton from "@/components/common/CommonButton.vue";
+    import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+    import CommonPagiNation from "@/components/common/CommonPagiNation.vue";
+    import api from "@/api/index.js";
 
-import {reactive, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
-import CommonInput from "@/components/common/CommonInput.vue";
-import CommonButton from "@/components/common/CommonButton.vue";
-import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
-import CommonPagiNation from "@/components/common/CommonPagiNation.vue";
-import api from "@/api/index.js";
+    const route = useRoute();
+    const router = useRouter();
+    const isLoading = ref(false);
+    const tipBoards = ref([]);
+    const tipBoardTotalPage = ref(1);
 
-const route = useRoute();
-const router = useRouter();
-const isLoading = ref(false);
-const tipBoards = ref([]);
-const tipBoardTotalPage = ref(1);
+    const searchOption = [
+      {label:'제목+내용', value: 'all'},
+      {label:'제목', value: 'title'},
+      {label:'내용' , value: 'content'}
+    ]
 
-const searchOption = [
-  {label:'제목+내용', value: 'all'},
-  {label:'제목', value: 'title'},
-  {label:'내용' , value: 'content'}
-]
-
-const searchParams = reactive({
-  p: Number(route.query.p) || 0,
-  opt: route.query.opt || 'all',
-  s: route.query.s || ''
-})
-
-const fnMoveTipBoardWrite = () => {
-  router.push({
-    path: '/tip-board/write',
-    query: route.query
-  })
-};
-
-const fnMoveTipBoardDetail = (tipBoardId) => {
-  router.push({
-    path: `/tip-board/${tipBoardId}`,
-    query: route.query
-  })
-};
-
-const fnSearchTipBoardList = (p) => {
-
-  searchParams.p = (typeof (p) === 'number') ? Number(p) : 0;
-
-  router.push({
-    path: route.path,
-    query: {...searchParams}
-  })
-}
-
-const fnGetTipBoardList = async ({p = 1, opt = 'all', s = ''} = {}) => {
-  if (isLoading.value) return;
-  try {
-    isLoading.value = true;
-
-    const response = await api.get('/tip-board', {
-      params: {
-        page: p,
-        size: 10,
-        selectedOption: opt,
-        searchValue: s
-      }
+    const searchParams = reactive({
+      p: Number(route.query.p) || 0,
+      opt: route.query.opt || 'all',
+      s: route.query.s || ''
     })
-    tipBoards.value = response.data.content;
-    tipBoardTotalPage.value = response.data.totalPages || 1
-  } catch (e) {
-    console.error(e);
-  } finally {
-    isLoading.value = false;
-  }
-}
 
-watch(() => route.query, (newQuery) => {
-  searchParams.p = Number(newQuery.p) || 0;
-  searchParams.opt = newQuery.opt || 'all';
-  searchParams.s = newQuery.s || '';
+    const fnMoveTipBoardWrite = () => {
+      router.push({
+        path: '/tip-board/write',
+        query: route.query
+      })
+    };
 
-  fnGetTipBoardList({
-    p: searchParams.p,
-    opt: searchParams.opt,
-    s: searchParams.s})
-}, {immediate: true, deep: true})
+    const fnMoveTipBoardDetail = (tipBoardId) => {
+      router.push({
+        path: `/tip-board/${tipBoardId}`,
+        query: route.query
+      })
+    };
+
+    const fnSearchTipBoardList = (p) => {
+
+      searchParams.p = (typeof (p) === 'number') ? Number(p) : 0;
+
+      router.push({
+        path: route.path,
+        query: {...searchParams}
+      })
+    }
+
+    const fnGetTipBoardList = async ({p = 1, opt = 'all', s = ''} = {}) => {
+      if (isLoading.value) return;
+      try {
+        isLoading.value = true;
+
+        const response = await api.get('/tip-board', {
+          params: {
+            page: p,
+            size: 10,
+            selectedOption: opt,
+            searchValue: s
+          }
+        })
+        tipBoards.value = response.data.content;
+        tipBoardTotalPage.value = response.data.totalPages || 1
+      } catch (e) {
+        console.error(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    watch(() => route.query, (newQuery) => {
+      searchParams.p = Number(newQuery.p) || 0;
+      searchParams.opt = newQuery.opt || 'all';
+      searchParams.s = newQuery.s || '';
+
+      fnGetTipBoardList({
+        p: searchParams.p,
+        opt: searchParams.opt,
+        s: searchParams.s})
+    }, {immediate: true, deep: true})
 </script>
 
 <template>

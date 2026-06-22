@@ -1,5 +1,5 @@
 <script setup>
-import {useRoute, useRouter} from "vue-router";
+  import {useRoute, useRouter} from "vue-router";
   import api from "@/api/index.js";
   import {onMounted, ref} from "vue";
   import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
@@ -7,6 +7,8 @@ import {useRoute, useRouter} from "vue-router";
   import CommonInput from "@/components/common/CommonInput.vue";
   import CommonButton from "@/components/common/CommonButton.vue";
   import CommonTextarea from "@/components/common/CommonTextarea.vue";
+  import {useModalStore} from "@/stores/modal.js";
+  import {storeToRefs} from "pinia";
 
   const areaOptions = [
     {label:'BACKEND', value: 'BACKEND'},
@@ -16,11 +18,12 @@ import {useRoute, useRouter} from "vue-router";
 
   const route = useRoute();
   const router = useRouter();
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
+
   const errorLog = ref({});
   const errorLogId = route.params.id;
-
   const isLoading = ref(false);
-  const isShowModal = ref(false);
 
   const fnGetErrorLogDetail = async () => {
     if (isLoading.value) return;
@@ -30,7 +33,15 @@ import {useRoute, useRouter} from "vue-router";
       const response = await api.get(`/error-log/${errorLogId}`);
       errorLog.value = response.data;
     } catch (e) {
-      isShowModal.value = true;
+      console.error(e);
+      modalStore.openModal({
+        title: '잘못된 접근입니다',
+        message: '존재하지 않는 에러 로그입니다',
+        confirmText: '확인',
+        type: 'alert',
+        confirm: () => {router.push({path: `/error-log`, query: route.query})},
+        outSideClose: false
+      })
     } finally {
       isLoading.value = false;
     }
@@ -103,10 +114,14 @@ import {useRoute, useRouter} from "vue-router";
 
   <CommonModal
       v-model="isShowModal"
-      title="잘못된 접근입니다"
-      message="존재하지 않는 에러 로그입니다"
-      :outSideClose="false"
-      @confirm="() => {router.push({path: `/error-log`, query: route.query})}"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>
 

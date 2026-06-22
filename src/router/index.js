@@ -2,6 +2,9 @@ import {createRouter, createWebHistory, RouterView} from "vue-router";
 import HomePage from "@/pages/Home.vue";
 import MainLayout from "@/layout/MainLayout.vue";
 import {COMMON_MAIN_MENU} from '@/components/common/CommonMainMenu.vue'
+import {useAuthStore} from "@/stores/auth.js";
+import {storeToRefs} from "pinia";
+import {useModalStore} from "@/stores/modal.js";
 
 const componentsMap = {
     'HomePage': HomePage,
@@ -55,6 +58,46 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes
+})
+
+router.beforeEach((to, from, next) => {
+
+    const authStore = useAuthStore();
+    const { accessToken, user: userInfo } = storeToRefs(authStore);
+    const userLevel = userInfo?.value?.level || 9;
+    const modalStore = useModalStore();
+
+    if (to.meta.requiresAuth
+        && !accessToken.value) {
+        modalStore.openModal({
+            title: '권한없음',
+            message: '로그인 후 이용해 주세요',
+            confirmText: '확인',
+            cancelText: '',
+            type: 'alert',
+            confirm: () => {router.push(`/login?bu=${encodeURIComponent(to.fullPath)}`)},
+            cancel: null,
+            outSideClose: false
+        })
+        return next(false);
+    }
+
+    if (!isNaN(to.meta?.level)
+        && !(parseInt(to.meta.level) >=userLevel)) {
+        modalStore.openModal({
+            title: '권한없음',
+            message: '접근 권한이 없습니다\n관리자에게 문의해주세요',
+            confirmText: '확인',
+            cancelText: '',
+            type: 'alert',
+            confirm: () => {router.push('/')},
+            cancel: null,
+            outSideClose: false
+        })
+        return next(false);
+    }
+
+    next()
 })
 
 export default router;

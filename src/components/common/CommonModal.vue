@@ -1,54 +1,56 @@
 <script setup>
-/** example */
-// const commonModalMap = {
-//   title: '',
-//   message: '',
-//   confirmText: '',
-//   cancelText: '',
-//   confirm: null,
-//   cancel: null,
-//   type: 'confirm',
-//   outSideClose: true
-// }
+  /** example */
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  modalStore.openModal({
+    title: '권한없음',
+    message: '로그인 후 이용해 주세요',
+    confirmText: '확인',
+    cancelText: '',
+    type: 'confirm',
+    confirm: null,
+    cancel: null,
+    outSideClose: true
+  })
+  <CommonModal
+  v-model="isShowModal"
+  :title="modalConfig.title"
+  :message="modalConfig.message"
+  :confirmText="modalConfig.confirmText"
+  :cancelText="modalConfig.cancelText"
+  :outSideClose="modalConfig.outSideClose"
+  :type="modalConfig.type"
+  @confirm="modalConfig.confirm"
+  @cancel="modalConfig.cancel"
+      />
 
-// <CommonModal
-//   v-model="isShowModal"
-//   :title="commonModalMap.title"
-//   :message="commonModalMap.message"
-//   :confirmText="commonModalMap.confirmText"
-//   :cancelText="commonModalMap.cancelText"
-//   :outSideClose="commonModalMap.outSideClose"
-//   @cancel="commonModalMap.cancel"
-//   @confirm="commonModalMap.confirm"
-//   :type="commonModalMap.type"
-// />
 
-const props = defineProps({
-  modelValue: Boolean,    // 모달 표시 여부
-  title: String,          // 모달 제목
-  message: String,        // 모달 본문 메시지
-  outSideClose: { type: Boolean, default: true },
-  confirmText: { type: String, default: '확인' },
-  cancelText: { type: String, default: '취소' },
-  type: { type: String, default: 'alert' } // 'alert' 또는 'confirm'
-})
+  const props = defineProps({
+    modelValue: Boolean,    // 모달 표시 여부
+    title: String,          // 모달 제목
+    message: String,        // 모달 본문 메시지
+    outSideClose: { type: Boolean, default: true },
+    confirmText: { type: String, default: '확인' },
+    cancelText: { type: String, default: '취소' },
+    type: { type: String, default: 'alert' } // 'alert' 또는 'confirm'
+  })
 
-const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
+  const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
 
-const fnClose = () => {
-  if (!props.outSideClose) return;
-  emit('update:modelValue', false)
-}
+  const fnClose = () => {
+    if (!props.outSideClose) return;
+    emit('update:modelValue', false);
+  }
 
-const fnConfirm = () => {
-  emit('confirm')
-  fnClose()
-}
+  const fnConfirm = () => {
+    emit('confirm');
+    emit('update:modelValue', false);
+  }
 
-const fnCancel = () => {
-  emit('cancel')
-  fnClose()
-}
+  const fnCancel = () => {
+    emit('cancel');
+    emit('update:modelValue', false);
+  }
 </script>
 
 <template>

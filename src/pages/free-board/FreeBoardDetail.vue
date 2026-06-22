@@ -1,34 +1,37 @@
 <script setup>
-
-import {useRoute, useRouter} from "vue-router";
-import {onMounted, ref} from "vue";
-import api from "@/api/index.js";
-import CommonTextarea from "@/components/common/CommonTextarea.vue";
-import CommonButton from "@/components/common/CommonButton.vue";
-import CommonInput from "@/components/common/CommonInput.vue";
-import CommonModal from "@/components/common/CommonModal.vue";
-import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+  import {useRoute, useRouter} from "vue-router";
+  import {onMounted, ref} from "vue";
+  import api from "@/api/index.js";
+  import CommonTextarea from "@/components/common/CommonTextarea.vue";
+  import CommonButton from "@/components/common/CommonButton.vue";
+  import CommonInput from "@/components/common/CommonInput.vue";
+  import CommonModal from "@/components/common/CommonModal.vue";
+  import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+  import {useModalStore} from "@/stores/modal.js";
+  import {storeToRefs} from "pinia";
 
   const router = useRouter();
   const route = useRoute();
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
+
   const freeBoardId = route.params.id;
   const freeBoard = ref({});
   const isLoading = ref(false);
-  const isShowModal = ref(false);
 
-const fnMoveFreeBoardList = () => {
-  router.push({
-    path: `/free-board`,
-    query: route.query
-  })
-};
+  const fnMoveFreeBoardList = () => {
+    router.push({
+      path: `/free-board`,
+      query: route.query
+    })
+  };
 
-const fnMoveFreeBoardUpdate = () => {
-  router.push({
-    path: `/free-board/update/${freeBoardId}`,
-    query: route.query
-  })
-};
+  const fnMoveFreeBoardUpdate = () => {
+    router.push({
+      path: `/free-board/update/${freeBoardId}`,
+      query: route.query
+    })
+  };
 
   const fnGetFreeBoardDetail = async () => {
     if (isLoading.value) return;
@@ -39,6 +42,15 @@ const fnMoveFreeBoardUpdate = () => {
       freeBoard.value = response.data
     } catch (e) {
       console.error(e);
+
+      modalStore.openModal({
+        title: '잘못된 접근입니다',
+        message: '존재하지 않는 에러 로그입니다',
+        confirmText: '확인',
+        type: 'alert',
+        confirm: () => {router.push({path: `/error-log`, query: route.query})},
+        outSideClose: false
+      })
     } finally {
       isLoading.value = false;
     }
@@ -94,10 +106,14 @@ const fnMoveFreeBoardUpdate = () => {
 
   <CommonModal
       v-model="isShowModal"
-      title="잘못된 접근입니다"
-      message="존재하지 않는 에러 로그입니다"
-      :outSideClose="false"
-      @confirm="() => {router.push({path: `/error-log`, query: route.query})}"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>
 

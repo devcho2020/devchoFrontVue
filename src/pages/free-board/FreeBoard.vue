@@ -1,6 +1,5 @@
 <script setup>
-
-import {reactive, ref, watch} from "vue";
+  import {reactive, ref, watch} from "vue";
   import {useRoute, useRouter} from "vue-router";
   import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
   import CommonInput from "@/components/common/CommonInput.vue";

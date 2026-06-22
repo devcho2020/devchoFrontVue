@@ -2,19 +2,21 @@
   import {commonJS} from '@/script/common.js'
 
   const defaultSubPages = [
-    {path: '', name: '', subTitle: ''},
-    {path: 'write', name: 'Write', subTitle: ' 작성'},
-    {path: 'update/:id', name: 'Update', subTitle: ' 수정'},
-    {path: ':id', name: 'Detail', subTitle: ' 상세'},
+    {path: '', name: '', subTitle: '', requiresAuth: false},
+    {path: 'write', name: 'Write', subTitle: ' 작성', requiresAuth: true},
+    {path: 'update/:id', name: 'Update', subTitle: ' 수정', requiresAuth: true},
+    {path: ':id', name: 'Detail', subTitle: ' 상세', requiresAuth: false},
   ]
 
-  const defaultChildrenList = (path, title, subTitle) => {
+  const defaultChildrenList = (path, title, subTitle, level = 999) => {
     return defaultSubPages.map((defaultChildren) => {
       return {
         path: defaultChildren.path,
         meta: {
           title: title,
           subTitle: subTitle + defaultChildren.subTitle,
+          requiresAuth: defaultChildren.requiresAuth,
+          level: level
         },
         component: `${commonJS.toPascalCase(path + defaultChildren.name)}`
       }
@@ -46,9 +48,10 @@
       type: 'side',
       title: 'profile',
       meta: {
-        title: 'profile'
-      }
-      , component: 'Profile'
+        title: 'profile',
+        requiresAuth: false,
+      },
+      component: 'Profile'
     },
     {
       path: 'free-board',
@@ -77,15 +80,20 @@
       title: '회원 정보',
       level: 1,
       component: 'RouterView',
-      children: defaultChildrenList('user-info', '회원 정보', '회원 정보')
+      children: defaultChildrenList('user-info', '회원 정보', '회원 정보', 1)
     },
     {
       path: 'codes',
       type: 'side',
       title: '코드관리',
+      meta: {
+        title: '코드관리',
+        subTitle: '코드관리',
+        level: 1
+      },
       level: 1,
       component: 'RouterView',
-      children: defaultChildrenList('codes', '코드 관리', '코드 관리')
+      children: defaultChildrenList('codes', '코드 관리', '코드 관리', 1)
     }
   ]
 

@@ -7,17 +7,11 @@
   import CommonModal from "@/components/common/CommonModal.vue";
   import api from "@/api/index.js";
   import {useRoute, useRouter} from "vue-router";
+  import {useModalStore} from "@/stores/modal.js";
+  import {storeToRefs} from "pinia";
 
-  const errorLogWriteModal = reactive({
-    title: '',
-    message: '',
-    confirmText: '',
-    cancelText: '',
-    confirm: null,
-    cancel: null,
-    type: 'confirm',
-    outSideClose: true
-  })
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
 
   const areaOptions = [
     {label:'BACKEND', value: 'BACKEND'},
@@ -34,18 +28,20 @@
   const route = useRoute();
   const router = useRouter();
   const errorLogId = ref(null);
-  const isShowModal = ref(false);
   const isLoading = ref(false);
   const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
 
   const fnModalCancel = () => {
-    errorLogWriteModal.title = '작성 취소';
-    errorLogWriteModal.message = '에러로그 작성을 취소하시겠습니까?';
-    errorLogWriteModal.confirmText = '목록';
-    errorLogWriteModal.cancelText = '닫기';
-    errorLogWriteModal.confirm = () => {router.push({path: '/error-log', query: route.query})};
-    errorLogWriteModal.cancel = null;
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '작성취소',
+      message: '에러로그 작성을 취소하시겠습니까?',
+      confirmText: '목록',
+      cancelText: '닫기',
+      type: 'confirm',
+      confirm: () => {router.push({path: '/error-log', query: route.query})},
+      cancel: null,
+      outSideClose: true
+    })
   }
 
   const fnModalConfirm = () => {
@@ -53,26 +49,27 @@
       return
     }
 
-    errorLogWriteModal.title = '입력 완료';
-    errorLogWriteModal.message = '입력하신 에러 로그를 저장하시겠습니까?';
-    errorLogWriteModal.confirmText = '저장';
-    errorLogWriteModal.cancelText = '닫기';
-    errorLogWriteModal.confirm = fnSaveErrorLog;
-    errorLogWriteModal.cancel = null;
-
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '입력완료',
+      message: '입력하신 에러 로그를 저장하시겠습니까?',
+      confirmText: '저장',
+      cancelText: '닫기',
+      type: 'confirm',
+      confirm: fnSaveErrorLog,
+      cancel: null,
+      outSideClose: true
+    })
   }
 
   const fnModalSave = () => {
-
-    errorLogWriteModal.title = '작성 완료';
-    errorLogWriteModal.message = '에러로그가 작성되었습니다';
-    errorLogWriteModal.confirmText = '확인';
-    errorLogWriteModal.confirm = () => {router.push({path: `/error-log/${errorLogId.value}`, query: route.query})};
-    errorLogWriteModal.type = 'alert';
-    errorLogWriteModal.outSideClose = false;
-
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '작성 완료',
+      message: '에러로그가 작성되었습니다',
+      confirmText: '저장',
+      type: 'alert',
+      confirm: () => {router.push({path: `/error-log/${errorLogId.value}`, query: route.query})},
+      outSideClose: false
+    })
   }
 
   const fnSaveErrorLog = async () => {
@@ -132,14 +129,14 @@
 
   <CommonModal
       v-model="isShowModal"
-      :title="errorLogWriteModal.title"
-      :message="errorLogWriteModal.message"
-      :confirmText="errorLogWriteModal.confirmText"
-      :cancelText="errorLogWriteModal.cancelText"
-      :outSideClose="errorLogWriteModal.outSideClose"
-      @cancel="errorLogWriteModal.cancel"
-      @confirm="errorLogWriteModal.confirm"
-      :type="errorLogWriteModal.type"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>
 

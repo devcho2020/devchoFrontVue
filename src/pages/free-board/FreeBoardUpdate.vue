@@ -7,37 +7,34 @@
   import CommonButton from "@/components/common/CommonButton.vue";
   import CommonInput from "@/components/common/CommonInput.vue";
   import CommonModal from "@/components/common/CommonModal.vue";
+  import {useModalStore} from "@/stores/modal.js";
+  import {storeToRefs} from "pinia";
 
   const route = useRoute();
-  const freeBoardId = route.params.id;
   const router = useRouter();
+
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
+
+  const freeBoardId = route.params.id;
   const isLoading = ref(false);
-  const isShowModal = ref(false);
   const form = reactive({
     title: '',
     content: '',
   });
   const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
 
-  const freeBoardWriteModal = reactive({
-    title: '',
-    message: '',
-    confirmText: '',
-    cancelText: '',
-    confirm: null,
-    cancel: null,
-    type: 'confirm',
-    outSideClose: true
-  });
-
   const fnModalCancel = () => {
-    freeBoardWriteModal.title = '수정 취소';
-    freeBoardWriteModal.message = '자유게시판 내용 수정을 취소하시겠습니까?';
-    freeBoardWriteModal.confirmText = '취소';
-    freeBoardWriteModal.cancelText = '닫기';
-    freeBoardWriteModal.confirm = () => {router.push({path: `/free-board/${freeBoardId}`, query: route.query})};
-    freeBoardWriteModal.cancel = null;
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '수정 취소',
+      message: '자유게시판 내용 수정을 취소하시겠습니까?',
+      confirmText: '취소',
+      cancelText: '닫기',
+      type: 'confirm',
+      confirm: () => {router.push({path: `/free-board/${freeBoardId}`, query: route.query})},
+      cancel: null,
+      outSideClose: true
+    })
   };
 
   const fnModalSaveConfirm = () => {
@@ -45,25 +42,27 @@
       return
     }
 
-    freeBoardWriteModal.title = '입력 완료';
-    freeBoardWriteModal.message = '입력하신 자유게시판 내용을 저장하시겠습니까?';
-    freeBoardWriteModal.confirmText = '저장';
-    freeBoardWriteModal.cancelText = '닫기';
-    freeBoardWriteModal.confirm = fnSaveFreeBoard;
-    freeBoardWriteModal.cancel = null;
-
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '입력 완료',
+      message: '입력하신 자유게시판 내용을 저장하시겠습니까?',
+      confirmText: '저장',
+      cancelText: '닫기',
+      type: 'confirm',
+      confirm: fnSaveFreeBoard,
+      cancel: null,
+      outSideClose: true
+    })
   }
 
   const fnModalSave = () => {
-    freeBoardWriteModal.title = '수정 완료';
-    freeBoardWriteModal.message = '자유게시판 내용이 수정되었습니다';
-    freeBoardWriteModal.confirmText = '확인';
-    freeBoardWriteModal.confirm = () => {router.push({path: `/free-board/${freeBoardId}`, query: route.query})};
-    freeBoardWriteModal.type = 'alert';
-    freeBoardWriteModal.outSideClose = false;
-
-    isShowModal.value = true
+    modalStore.openModal({
+      title: '수정 완료',
+      message: '자유게시판 내용이 수정되었습니다',
+      confirmText: '확인',
+      type: 'alert',
+      confirm: () => {router.push({path: `/free-board/${freeBoardId}`, query: route.query})},
+      outSideClose: true
+    })
   }
 
   const getFreeBoardDetail = async () => {
@@ -144,14 +143,14 @@
 
   <CommonModal
       v-model="isShowModal"
-      :title="freeBoardWriteModal.title"
-      :message="freeBoardWriteModal.message"
-      :confirmText="freeBoardWriteModal.confirmText"
-      :cancelText="freeBoardWriteModal.cancelText"
-      :outSideClose="freeBoardWriteModal.outSideClose"
-      @cancel="freeBoardWriteModal.cancel"
-      @confirm="freeBoardWriteModal.confirm"
-      :type="freeBoardWriteModal.type"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>
 

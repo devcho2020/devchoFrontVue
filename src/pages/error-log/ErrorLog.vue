@@ -1,14 +1,14 @@
 <script setup>
-  import CommonButton from '/src/components/common/CommonButton.vue'
-  import CommonSelectBox from '/src/components/common/CommonSelectBox.vue'
-  import CommonInput from '@/components/common/CommonInput.vue'
-  import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
-  import CommonPagiNation from "@/components/common/CommonPagiNation.vue";
-  import api from "@/api/index.js";
-  import {useRoute, useRouter} from "vue-router";
-  import {reactive, ref, watch} from "vue";
+import CommonButton from '/src/components/common/CommonButton.vue'
+import CommonSelectBox from '/src/components/common/CommonSelectBox.vue'
+import CommonInput from '@/components/common/CommonInput.vue'
+import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+import CommonPagiNation from "@/components/common/CommonPagiNation.vue";
+import api from "@/api/index.js";
+import {useRoute, useRouter} from "vue-router";
+import {reactive, ref, watch} from "vue";
 
-  const router = useRouter();
+const router = useRouter();
   const route = useRoute();
 
   const searchOption = [
