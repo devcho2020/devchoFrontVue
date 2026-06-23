@@ -1,29 +1,21 @@
 <script setup>
-import {onMounted, reactive, ref} from 'vue';
+  import {onMounted, reactive, ref} from 'vue';
   import {useRoute, useRouter} from 'vue-router';
   import CommonModal from "@/components/common/CommonModal.vue";
   import api from "@/api/index.js";
   import {useAuthStore} from "@/stores/auth.js";
   import CommonButton from "@/components/common/CommonButton.vue";
-import CommonInput from "@/components/common/CommonInput.vue";
-
-  const loginModal = reactive({
-    title: '로그인 실패',
-    message: '아이디 또는 비밀번호를 확인해 주세요',
-    confirmText: '확인',
-    cancelText: '',
-    confirm: null,
-    cancel: null,
-    type: 'alert',
-    outSideClose: true
-  });
+  import CommonInput from "@/components/common/CommonInput.vue";
+  import {useModalStore} from "@/stores/modal.js";
+  import {storeToRefs} from "pinia";
 
   const router = useRouter();
   const route = useRoute();
   const authStore = useAuthStore();
-  const backUrl = route.query.bu ? decodeURIComponent(route.query.bu) : '/';
+  const modalStore = useModalStore();
+  const { isShowModal, modalConfig } = storeToRefs(modalStore);
 
-  const isShowModal = ref(false);
+  const backUrl = route.query.bu ? decodeURIComponent(route.query.bu) : '/';
 
   const loginForm = ref({
     loginId: '',
@@ -36,45 +28,44 @@ import CommonInput from "@/components/common/CommonInput.vue";
   const isSubmitting = ref(false);
 
   const loginNullModal = () => {
-    loginModal.title = '로그인 실패';
-    loginModal.message = '아이디 또는 비밀번호를 입력해 주세요';
-    loginModal.confirmText = '확인';
-    loginModal.cancelText = '';
-    loginModal.confirm = () => {
-      if (loginForm.value?.loginId) {
-        loginPasswordRef.value?.focus();
-      } else {
-        loginIdRef.value?.focus();
-      }
-    };
-    loginModal.cancel = null;
-    loginModal.type = 'alert';
-
-    isShowModal.value = true;
+    modalStore.openModal({
+      title: '로그인 실패',
+      message: '아이디 또는 비밀번호를 입력해 주세요',
+      confirmText: '확인',
+      type: 'alert',
+      confirm: () => {
+        if (loginForm.value?.loginId) {
+          loginPasswordRef.value?.focus();
+        } else {
+          loginIdRef.value?.focus();
+        }
+      },
+      outSideClose: true
+    })
   }
 
   const loginFailModal = (failMsg) => {
-    loginModal.title = '로그인 실패';
-    loginModal.message = failMsg;
-    loginModal.confirmText = '확인';
-    loginModal.cancelText = '';
-    loginModal.confirm = () => {loginPasswordRef.value?.focus();};
-    loginModal.cancel = null;
-    loginModal.type = 'alert';
-
-    isShowModal.value = true;
+    modalStore.openModal({
+      title: '로그인 실패',
+      message: failMsg,
+      confirmText: '확인',
+      type: 'alert',
+      confirm: () => {loginPasswordRef.value?.focus()},
+      cancel: null,
+      outSideClose: true
+    })
   }
 
   const loginSuccessModal = () => {
-    loginModal.title = '로그인 성공';
-    loginModal.message = '로그인 되었습니다';
-    loginModal.confirmText = '확인';
-    loginModal.cancelText = '';
-    loginModal.confirm = () => {router.replace(backUrl)};
-    loginModal.cancel = null;
-    loginModal.type = 'alert';
-
-    isShowModal.value = true;
+    modalStore.openModal({
+      title: '로그인 성공',
+      message: '로그인 되었습니다',
+      confirmText: '확인',
+      type: 'alert',
+      confirm: () => {router.replace(backUrl)},
+      cancel: null,
+      outSideClose: false
+    })
   }
 
   // 로그인 실행 함수
@@ -137,7 +128,8 @@ import CommonInput from "@/components/common/CommonInput.vue";
           v-model="loginForm.loginPassword"
           ref="loginPasswordRef"
           type="password"
-          maxlength="20"
+          :maxlength="20"
+          @enter="fnLogin"
           placeholder="비밀번호를 입력하세요"
       />
     </div>
@@ -152,26 +144,19 @@ import CommonInput from "@/components/common/CommonInput.vue";
         >
           로그인
         </CommonButton>
-<!--        <button-->
-<!--            type="submit"-->
-<!--            :disabled="isSubmitting"-->
-<!--            class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white font-semibold rounded-lg transition-colors mt-2"-->
-<!--        >-->
-<!--          {{ isSubmitting ? '인증 중...' : '로그인' }}-->
-<!--        </button>-->
     </div>
 
   </div>
 
   <CommonModal
       v-model="isShowModal"
-      :title="loginModal.title"
-      :message="loginModal.message"
-      :confirmText="loginModal.confirmText"
-      :cancelText="loginModal.cancelText"
-      :outSideClose="loginModal.outSideClose"
-      @cancel="loginModal.cancel"
-      @confirm="loginModal.confirm"
-      :type="loginModal.type"
+      :title="modalConfig.title"
+      :message="modalConfig.message"
+      :confirmText="modalConfig.confirmText"
+      :cancelText="modalConfig.cancelText"
+      :outSideClose="modalConfig.outSideClose"
+      :type="modalConfig.type"
+      @confirm="modalConfig.confirm"
+      @cancel="modalConfig.cancel"
   />
 </template>

@@ -119,6 +119,7 @@ const router = useRouter();
           <tr class="bg-slate-900/50 border-b border-slate-800">
             <th class="w-1/2 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">제목</th>
             <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">영역</th>
+            <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">작성자</th>
             <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">작성일</th>
           </tr>
         </thead>
@@ -158,6 +159,9 @@ const router = useRouter();
               >
                 {{ errorLog.area }}
               </span>
+            </td>
+            <td class="px-6 py-4 text-xs text-slate-500 font-mono text-center">
+              {{ errorLog.creator?.userName }}
             </td>
             <td class="px-6 py-4 text-xs text-slate-500 font-mono text-center">
               <CommonDateFormat

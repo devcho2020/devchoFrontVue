@@ -9,6 +9,7 @@
   import CommonTextarea from "@/components/common/CommonTextarea.vue";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
 
   const areaOptions = [
     {label:'BACKEND', value: 'BACKEND'},
@@ -78,9 +79,23 @@
         수정
       </commonButton>
     </div>
-    <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-8 space-y-6">
+    <div class="bg-slate-900/50 rounded-2xl border border-slate-800 pt-4 px-8 space-y-6">
       <div class="w-full">
-        <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Title</label>
+        <div class="flex gap-2 justify-end">
+          <div v-if="errorLog.creator"
+               class="text-xs font-bold"
+          >
+            <CommonDateFormat :date="String(errorLog.createdAt)" format="YYYY년 MM월 DD일"/> {{ errorLog.creator.userName }} 작성
+          </div>
+          <div v-if="errorLog.updater"
+               class="text-xs font-bold"
+          >
+            / <CommonDateFormat :date="String(errorLog.updatedAt)" format="YYYY년 MM월 DD일"/> {{ errorLog.updater.userName }} 수정
+          </div>
+        </div>
+      </div>
+      <div class="w-full">
+        <label class="text-xl font-bold text-slate-400 uppercase tracking-widest">Title</label>
         <CommonInput
             v-model="errorLog.title"
             @labelStr=""

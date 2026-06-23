@@ -51,6 +51,27 @@
   <div class="overflow-auto bg-slate-950 text-slate-200 font-mono h-screen">
 
     <nav class="fixed left-0 top-0 h-full w-30 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-8 z-20">
+      <div class="h-20">
+        <div v-if="!accessToken && !route.path.includes('/login')">
+          <CommonButton
+              @click="() => {router.push(`/login?bu=${encodeURIComponent(route.fullPath)}`)}"
+              buttonWidthClass="w-20"
+              buttonHeightClass="h-8"
+          >
+            Login
+          </CommonButton>
+        </div>
+        <div v-if="accessToken">
+          <CommonButton
+              @click="() => {fnLogout()}"
+              buttonWidthClass="w-20"
+              buttonHeightClass="h-8"
+              variant="secondary"
+          >
+            Logout
+          </CommonButton>
+        </div>
+      </div>
       <router-link v-if="accessToken" to="/" class="flex w-20 h-15 bg-blue-600 rounded items-center justify-center mb-12 font-bold text-white">
         {{ userInfo?.userName }}
       </router-link>
@@ -61,7 +82,7 @@
         <template v-for="(mainMenu, i) in mainMenuList" :key="i">
           <router-link :to="'/' + mainMenu.path"
                        :class="route.path === '/' + mainMenu.path ? 'text-white': ''"
-                       class="block hover:text-white cursor-pointer text-center">
+                       class="block hover:text-white cursor-pointer text-center underline">
             <span class="block text-xs">{{mainMenu.title}}</span>
           </router-link>
         </template>
@@ -75,27 +96,16 @@
           <div class="text-xs text-slate-500 uppercase tracking-widest">
             <span>/cho<span class="text-blue-400">{{ paths }}</span></span>
           </div>
-          <div v-if="!accessToken && !route.path.includes('/login')">
-            <CommonButton
-                @click="() => {router.push(`/login?bu=${encodeURIComponent(route.fullPath)}`)}"
-            >
-              Login
-            </CommonButton>
-          </div>
-          <div v-if="accessToken">
-            <CommonButton
-                @click="() => {fnLogout()}"
-            >
-              Logout
-            </CommonButton>
-          </div>
+
         </div>
       </header>
 
       <main class="max-w-8xl px-16 py-4 min-w-240">
-        <section class="h-8 mb-12">
-          <h2 v-if="pageTitle" class="text-3xl font-bold text-white mb-2">{{ pageTitle }}</h2>
-          <p class="text-slate-400">{{ pageSubTitle }}</p>
+        <section class="h-10 py-2 flex gap-4 items-end">
+          <div v-if="pageTitle" class="text-3xl font-bold text-white">{{ pageTitle }}</div>
+          <div class="text-lg text-slate-400">
+            {{ pageSubTitle }}
+          </div>
         </section>
 
         <div class="border-t border-slate-800 pt-4">

@@ -20,7 +20,7 @@
     },
     buttonHeightClass: {
       type: String,
-      default: 'py-2'
+      default: 'h-10'
     }
   })
   const emit = defineEmits(['click']);
@@ -46,7 +46,7 @@
   <button
       @click="emit('click')"
       :type="buttonType"
-      class="px-6 text-white rounded-lg text-sm font-bold shadow-lg h-10
+      class="px-6 text-white rounded-lg text-sm font-bold shadow-lg
       transition-all flex items-center justify-center gap-2"
       :disabled="disabled"
       :class="[btnClass, buttonWidthClass, buttonHeightClass, disabled ? 'opacity-50 cursor-not-allowed grayscale-[0.5]' : 'cursor-pointer active:scale-95']"

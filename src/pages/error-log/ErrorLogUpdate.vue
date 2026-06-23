@@ -68,11 +68,11 @@
 
     modalStore.openModal({
       title: '입력완료',
-      message: '입력하신 에러 로그를 저장하시겠습니까? 저장 후에는 목록에서 바로 확인 가능합니다.';
+      message: '입력하신 에러 로그를 저장하시겠습니까? 저장 후에는 목록에서 바로 확인 가능합니다.',
       confirmText: '저장',
       cancelText: '닫기',
       type: 'confirm',
-      confirm: () => fnSaveErrorLog,
+      confirm: fnSaveErrorLog,
       cancel: null
     })
   }
@@ -81,11 +81,11 @@
 
     modalStore.openModal({
       title: '수정완료',
-      message: '에러로그가 수정되었습니다';
+      message: '에러로그가 수정되었습니다',
       confirmText: '저장',
       cancelText: '닫기',
       type: 'alert',
-      confirm: () => () => {router.push({path: `/error-log/${errorLogId}`, query: route.query})},
+      confirm: () => {router.push({path: `/error-log/${errorLogId}`, query: route.query})},
       cancel: null,
       outSideClose: false
     })
