@@ -25,6 +25,15 @@
 
   const mainMenus = [
     {
+      path: '/:pathMatch(.*)*', // URL path
+      title: 'NotFound',
+      meta: {
+        title: 'NotFound',
+        subTitle: '요청하신 페이지를 찾을 수 없습니다',
+      },
+      component: 'NotFound'
+    },
+    {
       path: '', // URL path
       type: '', // SIDE OR NULL
       title: 'HOME',

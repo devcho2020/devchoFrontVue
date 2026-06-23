@@ -5,8 +5,10 @@ import {COMMON_MAIN_MENU} from '@/components/common/CommonMainMenu.vue'
 import {useAuthStore} from "@/stores/auth.js";
 import {storeToRefs} from "pinia";
 import {useModalStore} from "@/stores/modal.js";
+import NotFound from "@/pages/NotFound.vue";
 
 const componentsMap = {
+    'NotFound': NotFound,
     'HomePage': HomePage,
     'RouterView': RouterView,
     'Login': () => import('@/pages/Login.vue'),
