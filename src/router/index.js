@@ -70,7 +70,7 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth
         && !accessToken.value) {
         modalStore.openModal({
-            title: '권한없음',
+            title: '권한 없음',
             message: '로그인 후 이용해 주세요',
             confirmText: '확인',
             cancelText: '',
@@ -85,7 +85,7 @@ router.beforeEach((to, from, next) => {
     if (!isNaN(to.meta?.level)
         && !(parseInt(to.meta.level) >=userLevel)) {
         modalStore.openModal({
-            title: '권한없음',
+            title: '권한 없음',
             message: '접근 권한이 없습니다\n관리자에게 문의해주세요',
             confirmText: '확인',
             cancelText: '',

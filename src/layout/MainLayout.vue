@@ -117,6 +117,7 @@
   </div>
 
   <CommonModal
+      v-if="isShowModal"
       v-model="isShowModal"
       :title="modalConfig.title"
       :message="modalConfig.message"

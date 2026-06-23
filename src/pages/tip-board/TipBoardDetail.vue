@@ -9,11 +9,14 @@
   import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import {useAuthStore} from "@/stores/auth.js";
 
   const router = useRouter();
   const route = useRoute();
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  const authStore = useAuthStore();
+  const { user: userInfo } = storeToRefs(authStore);
 
   const tipBoardId = route.params.id;
   const tipBoard = ref({});
@@ -66,7 +69,9 @@
       <commonButton @click="fnMoveTipBoardList" variant="gray">
         목록
       </commonButton>
-      <commonButton @click="fnMoveTipBoardUpdate" variant="primary">
+      <commonButton
+          v-if="userInfo !== null && userInfo.id === tipBoard.creator?.id"
+          @click="fnMoveTipBoardUpdate" variant="primary">
         수정
       </commonButton>
     </div>

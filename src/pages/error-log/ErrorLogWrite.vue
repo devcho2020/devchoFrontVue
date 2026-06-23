@@ -50,7 +50,7 @@
     }
 
     modalStore.openModal({
-      title: '입력완료',
+      title: '입력 완료',
       message: '입력하신 에러 로그를 저장하시겠습니까?',
       confirmText: '저장',
       cancelText: '닫기',

@@ -10,6 +10,7 @@
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
   import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+  import {useAuthStore} from "@/stores/auth.js";
 
   const areaOptions = [
     {label:'BACKEND', value: 'BACKEND'},
@@ -21,6 +22,8 @@
   const router = useRouter();
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  const authStore = useAuthStore();
+  const { user: userInfo } = storeToRefs(authStore);
 
   const errorLog = ref({});
   const errorLogId = route.params.id;
@@ -75,7 +78,9 @@
       <commonButton @click="fnMoveErrorLogList" variant="gray">
         목록
       </commonButton>
-      <commonButton @click="fnMoveErrorLogUpdate" variant="primary">
+      <commonButton
+          v-if="userInfo !== null && userInfo.id === errorLog.creator?.id"
+          @click="fnMoveErrorLogUpdate" variant="primary">
         수정
       </commonButton>
     </div>

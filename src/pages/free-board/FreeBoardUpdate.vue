@@ -9,15 +9,19 @@
   import CommonModal from "@/components/common/CommonModal.vue";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import {useAuthStore} from "@/stores/auth.js";
 
   const route = useRoute();
   const router = useRouter();
 
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  const authStore = useAuthStore();
+  const { accessToken , user : userInfo } = storeToRefs(authStore);
 
   const freeBoardId = route.params.id;
   const isLoading = ref(false);
+  const isOwner = ref(false);
   const form = reactive({
     title: '',
     content: '',
@@ -25,6 +29,7 @@
   const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
 
   const fnModalCancel = () => {
+    console.log('d')
     modalStore.openModal({
       title: '수정 취소',
       message: '자유게시판 내용 수정을 취소하시겠습니까?',
@@ -61,7 +66,7 @@
       confirmText: '확인',
       type: 'alert',
       confirm: () => {router.push({path: `/free-board/${freeBoardId}`, query: route.query})},
-      outSideClose: true
+      outSideClose: false
     })
   }
 
@@ -71,8 +76,25 @@
     try {
       isLoading.value = true;
       const response = await api.get(`/free-board/${freeBoardId}`);
+      if (response.data.creator?.id !== userInfo.value.id) {
+        modalStore.openModal({
+          title: '권한 없음',
+          message: '해당 게시글에 수정 권한이 없습니다\n3초후 페이지가 이동됩니다',
+          confirmText: '확인',
+          type: 'alert',
+          confirm: () => {router.replace(`/free-board/${freeBoardId}`)},
+          outSideClose: false
+        })
+        setTimeout(() => {
+          isShowModal.value = false;
+          router.replace(`/free-board/${freeBoardId}`)
+        }, 3000)
+        return;
+      }
+
       const { title, content, area } = response.data;
       Object.assign(form, {title, content, area});
+      isOwner.value = true;
     } catch (e) {
       console.error(e);
     } finally {
@@ -107,6 +129,7 @@
         취소
       </commonButton>
       <commonButton
+          v-if="isOwner"
           @click="fnModalSaveConfirm"
           variant="primary"
           :disabled="validationSubmit"

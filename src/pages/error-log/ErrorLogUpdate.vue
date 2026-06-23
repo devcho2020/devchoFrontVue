@@ -9,9 +9,12 @@
   import CommonTextarea from "@/components/common/CommonTextarea.vue";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import {useAuthStore} from "@/stores/auth.js";
 
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  const authStore = useAuthStore();
+  const { user: userInfo } = storeToRefs(authStore);
 
   const areaOptions = [
     {label:'BACKEND', value: 'BACKEND'},
@@ -30,8 +33,8 @@
   const errorLogId = route.params.id;
   const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
 
-
   const isLoading = ref(false);
+  const isOwner = ref(false);
 
 
   const fnGetErrorLogDetail = async () => {
@@ -40,8 +43,26 @@
     try {
       isLoading.value = true;
       const response = await api.get(`/error-log/${errorLogId}`);
+
+      if (response.data.creator?.id !== userInfo.value.id) {
+        modalStore.openModal({
+          title: '권한 없음',
+          message: '해당 게시글에 수정 권한이 없습니다\n3초후 페이지가 이동됩니다',
+          confirmText: '확인',
+          type: 'alert',
+          confirm: () => {router.replace(`/error-log/${errorLogId}`)},
+          outSideClose: false
+        })
+        setTimeout(() => {
+          isShowModal.value = false;
+          router.replace(`/error-log/${errorLogId}`)
+        }, 3000)
+        return;
+      }
+
       const { title, content, area } = response.data;
       Object.assign(form, {title, content, area});
+      isOwner.value = true;
     } catch (e) {
       console.error(e);
     } finally {
@@ -67,8 +88,8 @@
     }
 
     modalStore.openModal({
-      title: '입력완료',
-      message: '입력하신 에러 로그를 저장하시겠습니까? 저장 후에는 목록에서 바로 확인 가능합니다.',
+      title: '입력 완료',
+      message: '입력하신 에러 로그를 저장하시겠습니까?',
       confirmText: '저장',
       cancelText: '닫기',
       type: 'confirm',
@@ -118,7 +139,9 @@
       <commonButton @click="fnModalCancel" variant="gray">
         취소
       </commonButton>
-      <commonButton @click="fnModalSaveConfirm" variant="primary" :disabled="validationSubmit">
+      <commonButton
+          v-if="isOwner"
+          @click="fnModalSaveConfirm" variant="primary" :disabled="validationSubmit">
         저장
       </commonButton>
     </div>

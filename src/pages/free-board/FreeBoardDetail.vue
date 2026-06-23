@@ -9,11 +9,14 @@
   import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import {useAuthStore} from "@/stores/auth.js";
 
   const router = useRouter();
   const route = useRoute();
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
+  const authStore = useAuthStore();
+  const { user: userInfo } = storeToRefs(authStore);
 
   const freeBoardId = route.params.id;
   const freeBoard = ref({});
@@ -67,7 +70,10 @@
       <commonButton @click="fnMoveFreeBoardList" variant="gray">
         목록
       </commonButton>
-      <commonButton @click="fnMoveFreeBoardUpdate" variant="primary">
+      <commonButton
+          v-if="userInfo !== null && userInfo.id === freeBoard.creator?.id"
+          @click="fnMoveFreeBoardUpdate" variant="primary"
+      >
         수정
       </commonButton>
     </div>
