@@ -73,32 +73,37 @@
     </div>
     <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-8 space-y-6">
       <div class="w-full">
-        <div class="flex justify-between pb-2">
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Title</label>
-          <span class="text-ls font-bold">
-            <CommonDateFormat :date="String(freeBoard.updatedAt || freeBoard.createdAt)" format="YYYY년 MM월 DD일"/>
-            {{ freeBoard.updatedAt ? '수정' : '작성' }}
-          </span>
+        <div class="flex justify-between">
+          <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Title</label>
+          <div class="w-full flex gap-2 justify-end items-end pb-2">
+            <div v-if="freeBoard.creator"
+                 class="text-xs font-bold"
+            >
+              <CommonDateFormat :date="String(freeBoard.createdAt)" format="YYYY년 MM월 DD일"/> {{ freeBoard.creator.userName }} 작성
+            </div>
+            <div v-if="freeBoard.updater"
+                 class="text-xs font-bold"
+            >
+              / <CommonDateFormat :date="String(freeBoard.updatedAt)" format="YYYY년 MM월 DD일"/> {{ freeBoard.updater.userName }} 수정
+            </div>
+          </div>
         </div>
         <CommonInput
             v-model="freeBoard.title"
             @labelStr=""
             :disabled="true"
-            placeholder="에러 명칭 또는 요약된 제목을 입력하세요"
             :maxlength="Number(80)"
         />
       </div>
-
       <div class="w-full">
         <div class="pb-2">
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest ">Content</label>
+          <label class="text-lg font-bold text-slate-400 uppercase tracking-widest ">Content</label>
         </div>
         <CommonTextarea
             v-model="freeBoard.content"
             :rows="Number(12)"
             :maxLength="Number(300)"
             :disabled="true"
-            placeholder="에러 원인, 해결 방법, 참고 코드 등을 자유롭게 적어주세요."
         />
       </div>
     </div>

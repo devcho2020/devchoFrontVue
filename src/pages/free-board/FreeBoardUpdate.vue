@@ -117,7 +117,7 @@
     <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-8 space-y-6">
       <div class="w-full">
         <div class="flex justify-between pb-2">
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Title</label>
+          <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Title</label>
         </div>
         <CommonInput
             v-model="form.title"
@@ -129,7 +129,7 @@
 
       <div class="w-full">
         <div class="pb-2">
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest ">Content</label>
+          <label class="text-lg font-bold text-slate-400 uppercase tracking-widest ">Content</label>
         </div>
         <CommonTextarea
             v-model="form.content"

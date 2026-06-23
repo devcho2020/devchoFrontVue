@@ -101,7 +101,7 @@
     </div>
     <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-8 space-y-6">
       <div class="w-full">
-        <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Title</label>
+        <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Title</label>
         <CommonInput
             v-model="form.title"
             @labelStr=""
@@ -111,12 +111,12 @@
       </div>
 
       <div class="w-full">
-        <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Area</label>
+        <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Area</label>
         <commonSelectBox v-model="form.area" :options="areaOptions" class="w-full" />
       </div>
 
       <div class="w-full">
-        <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Content</label>
+        <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Content</label>
         <CommonTextarea
             v-model="form.content"
             :rows="Number(12)"
