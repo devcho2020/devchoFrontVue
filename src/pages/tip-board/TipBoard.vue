@@ -113,6 +113,7 @@
         <tr class="bg-slate-900/50 border-b border-slate-800">
           <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">제목</th>
           <th class="w-1/2 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">내용</th>
+          <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">작성자</th>
           <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">작성일</th>
         </tr>
         </thead>
@@ -145,6 +146,9 @@
               <span class="text-sm font-semibold text-slate-200 group-hover:text-blue-400 transition-colors ">
                 {{ tipBoard.content }}
               </span>
+          </td>
+          <td class="px-6 py-4 text-xs text-slate-500 font-mono text-center">
+            {{ tipBoard.creator?.userName }}
           </td>
           <td class="px-6 py-4 text-xs text-slate-500 font-mono text-center">
             <CommonDateFormat

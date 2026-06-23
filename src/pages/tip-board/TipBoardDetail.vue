@@ -72,12 +72,20 @@
     </div>
     <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-8 space-y-6">
       <div class="w-full">
-        <div class="flex justify-between pb-2">
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Title</label>
-          <span class="text-ls font-bold">
-            <CommonDateFormat :date="String(tipBoard.updatedAt || tipBoard.createdAt)" format="YYYY년 MM월 DD일"/>
-            {{ tipBoard.updatedAt ? '수정' : '작성' }}
-          </span>
+        <div class="flex justify-between">
+          <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Title</label>
+          <div class="w-full flex gap-2 justify-end items-end pb-2">
+            <div v-if="tipBoard.creator"
+                 class="text-xs font-bold"
+            >
+              <CommonDateFormat :date="String(tipBoard.createdAt)" format="YYYY년 MM월 DD일"/> {{ tipBoard.creator.userName }} 작성
+            </div>
+            <div v-if="tipBoard.updater"
+                 class="text-xs font-bold"
+            >
+              / <CommonDateFormat :date="String(tipBoard.updatedAt)" format="YYYY년 MM월 DD일"/> {{ tipBoard.updater.userName }} 수정
+            </div>
+          </div>
         </div>
         <CommonInput
             v-model="tipBoard.title"
@@ -90,7 +98,7 @@
 
       <div class="w-full">
         <div class="pb-2">
-          <label class="text-xs font-bold text-slate-400 uppercase tracking-widest ">Content</label>
+          <label class="text-lg font-bold text-slate-400 uppercase tracking-widest ">Content</label>
         </div>
         <CommonTextarea
             v-model="tipBoard.content"
