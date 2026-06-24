@@ -151,7 +151,7 @@
         <CommonInput
             v-model="form.title"
             @labelStr=""
-            placeholder="에러 명칭 또는 요약된 제목을 입력하세요"
+            placeholder="에러 명칭 또는 요약된 제목을 입력해 주세요"
             :maxlength="Number(80)"
         />
       </div>

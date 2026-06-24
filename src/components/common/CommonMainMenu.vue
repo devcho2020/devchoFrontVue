@@ -53,13 +53,23 @@
       , component: 'Login'
     },
     {
+      path: 'user-join',
+      title: '회원가입',
+      meta: {
+        title: '회원가입',
+      }
+      , component: 'UserJoin'
+    },
+    {
       path: 'profile',
       type: 'side',
       title: 'profile',
       meta: {
         title: 'profile',
         requiresAuth: false,
+        level: 9,
       },
+      level: 9,
       component: 'Profile'
     },
     {

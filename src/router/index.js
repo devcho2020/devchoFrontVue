@@ -12,6 +12,7 @@ const componentsMap = {
     'HomePage': HomePage,
     'RouterView': RouterView,
     'Login': () => import('@/pages/Login.vue'),
+    'UserJoin': () => import('@/pages/UserJoin.vue'),
     'Profile': () => import('@/pages/Profile.vue'),
     'FreeBoard': () => import('@/pages/free-board/FreeBoard.vue'),
     'FreeBoardWrite': () => import('@/pages/free-board/FreeBoardWrite.vue'),

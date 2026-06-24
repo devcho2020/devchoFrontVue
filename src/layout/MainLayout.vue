@@ -55,27 +55,27 @@
         <div v-if="!accessToken && !route.path.includes('/login')">
           <CommonButton
               @click="() => {router.push(`/login?bu=${encodeURIComponent(route.fullPath)}`)}"
-              buttonWidthClass="w-20"
+              buttonWidthClass="w-25"
               buttonHeightClass="h-8"
           >
-            Login
+            로그인
           </CommonButton>
         </div>
         <div v-if="accessToken">
           <CommonButton
               @click="() => {fnLogout()}"
-              buttonWidthClass="w-20"
+              buttonWidthClass="w-25"
               buttonHeightClass="h-8"
               variant="secondary"
           >
-            Logout
+            로그아웃
           </CommonButton>
         </div>
       </div>
-      <router-link v-if="accessToken" to="/" class="flex w-20 h-15 bg-blue-600 rounded items-center justify-center mb-12 font-bold text-white">
+      <router-link v-if="accessToken" to="/" class="flex w-25 h-15 bg-blue-600 rounded items-center justify-center mb-12 font-bold text-white">
         {{ userInfo?.userName }}
       </router-link>
-      <router-link v-if="!accessToken" to="/" class="flex w-20 h-15 bg-gray-700 rounded items-center justify-center mb-12 font-bold text-white">
+      <router-link v-if="!accessToken" to="/" class="flex w-25 h-15 bg-gray-700 rounded items-center justify-center mb-12 font-bold text-white">
         HOME
       </router-link>
       <div class="flex-1 space-y-8 text-slate-400">

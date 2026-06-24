@@ -18,7 +18,7 @@
   const backUrl = route.query.bu ? decodeURIComponent(route.query.bu) : '/';
 
   const loginForm = ref({
-    loginId: '',
+    loginId: route.query.userId || '',
     loginPassword: ''
   });
 
@@ -103,7 +103,7 @@
 </script>
 
 <template>
-  <div class="max-w-md mx-auto mt-20 p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-md">
+  <form class="max-w-md mx-auto mt-20 p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-md" onsubmit="return false;">
     <h2 class="text-2xl font-bold text-center text-white mb-6 tracking-wide">SIGN IN</h2>
 
     <div>
@@ -113,10 +113,9 @@
       <CommonInput
           v-model="loginForm.loginId"
           ref="loginIdRef"
-          inputRef="loginIdRef"
           type="text"
           :maxlength="20"
-          placeholder="아이디를 입력하세요"
+          placeholder="아이디를 입력해 주세요"
       />
     </div>
 
@@ -127,26 +126,23 @@
       <CommonInput
           v-model="loginForm.loginPassword"
           ref="loginPasswordRef"
-          type="password"
+          inputType="password"
           :maxlength="20"
           @enter="fnLogin"
-          placeholder="비밀번호를 입력하세요"
+          placeholder="비밀번호를 입력해 주세요"
       />
     </div>
     <div class="flex gap-4 pt-4">
 
-        <CommonButton type="button" buttonWidthClass="w-full">
+        <CommonButton buttonWidthClass="w-full" @click="() => {router.push('/user-join')}">
           회원가입
         </CommonButton>
-        <CommonButton type="submit" buttonWidthClass="w-full"
-                      @click="fnLogin"
-          :disabled="isSubmitting"
-        >
+        <CommonButton buttonWidthClass="w-full" @click="fnLogin" :disabled="isSubmitting">
           로그인
         </CommonButton>
     </div>
 
-  </div>
+  </form>
 
   <CommonModal
       v-model="isShowModal"
