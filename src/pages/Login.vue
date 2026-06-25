@@ -8,6 +8,7 @@
   import CommonInput from "@/components/common/CommonInput.vue";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import CommonCheckBox from "@/components/common/CommonCheckBox.vue";
 
   const router = useRouter();
   const route = useRoute();
@@ -21,6 +22,14 @@
     loginId: route.query.userId || '',
     loginPassword: ''
   });
+
+  const checkedCheckBox = ref([]);
+  const checkBoxOption = [
+    {
+      value: 'login',
+      label: 'Id기억하기'
+    }
+  ]
 
   const loginIdRef = ref(null);
   const loginPasswordRef = ref(null);
@@ -68,7 +77,6 @@
     })
   }
 
-  // 로그인 실행 함수
   const fnLogin = async () => {
     if (!loginForm.value.loginId || !loginForm.value.loginPassword) {
       loginNullModal();
@@ -82,6 +90,11 @@
 
       if (response?.data?.loginResult) {
         authStore.setLoginInfo(response.data.token, response.data.userInfo);
+        if (checkedCheckBox.value.includes('login')) {
+          localStorage.setItem('userIdRemember', loginForm.value.loginId);
+        } else {
+          localStorage.removeItem('userIdRemember');
+        }
         loginSuccessModal();
       } else {
         loginFailModal(response.data?.failMsg);
@@ -96,8 +109,11 @@
 
   onMounted(() => {
     if (authStore.accessToken) router.replace(backUrl);
-
     loginIdRef.value?.focus();
+    if (localStorage.userIdRemember) {
+      checkedCheckBox.value.push('login');
+      loginForm.value.loginId = localStorage.userIdRemember;
+    }
   })
 
 </script>
@@ -130,6 +146,12 @@
           :maxlength="20"
           @enter="fnLogin"
           placeholder="비밀번호를 입력해 주세요"
+      />
+    </div>
+    <div class="flex gap-4 pt-4 justify-start">
+      <CommonCheckBox
+          v-model="checkedCheckBox"
+          :options="checkBoxOption"
       />
     </div>
     <div class="flex gap-4 pt-4">
