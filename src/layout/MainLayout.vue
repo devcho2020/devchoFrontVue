@@ -72,7 +72,7 @@
           </CommonButton>
         </div>
       </div>
-      <router-link v-if="accessToken" to="/" class="flex w-25 h-15 bg-blue-600 rounded items-center justify-center mb-12 font-bold text-white">
+      <router-link v-if="accessToken" to="/" class="flex w-25 p-2 overflow-hidden h-15 bg-blue-600 rounded items-center justify-center mb-12 font-bold text-white">
         {{ userInfo?.userName }}
       </router-link>
       <router-link v-if="!accessToken" to="/" class="flex w-25 h-15 bg-gray-700 rounded items-center justify-center mb-12 font-bold text-white">

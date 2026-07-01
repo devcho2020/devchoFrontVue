@@ -26,6 +26,11 @@
     s: route.query.s || ''
   })
 
+  const fnUserLevelLabel = (level) => {
+    const userLevelOption = searchOption.find(option => option.value === level);
+    return userLevelOption?.label || '미정'
+  }
+
   const fnMoveUserInfoWrite = () => {
     router.push({
       path: '/user-info/write',
@@ -112,9 +117,10 @@
       <table class="table-fixed w-full text-left border-collapse">
         <thead>
         <tr class="bg-slate-900/50 border-b border-slate-800">
-          <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">제목</th>
-          <th class="w-1/2 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">내용</th>
-          <th class="w-1/6 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">작성일</th>
+          <th class="w-1/4 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">등급</th>
+          <th class="w-1/4 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">아이디</th>
+          <th class="w-1/4 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">이름</th>
+          <th class="w-1/4 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">가입일</th>
         </tr>
         </thead>
         <tbody class="divide-y divide-slate-800">
@@ -137,14 +143,19 @@
             @click="fnMoveUserInfoDetail(userInfo.id)"
             class="hover:bg-slate-800/30 transition-colors cursor-pointer group"
         >
-          <td class="px-6 py-4 truncate">
+          <td class="px-6 py-4 truncate text-center">
               <span class="text-sm font-semibold text-slate-200 group-hover:text-blue-400 transition-colors ">
-                {{ userInfo.userName }}
+                {{ fnUserLevelLabel(userInfo.level) }}
               </span>
           </td>
-          <td class="px-6 py-4 truncate">
+          <td class="px-6 py-4 truncate text-center">
               <span class="text-sm font-semibold text-slate-200 group-hover:text-blue-400 transition-colors ">
-                {{ userInfo.content }}
+                {{ userInfo.userId }}
+              </span>
+          </td>
+          <td class="px-6 py-4 truncate text-center">
+              <span class="text-sm font-semibold text-slate-200 group-hover:text-blue-400 transition-colors ">
+                {{ userInfo.userName }}
               </span>
           </td>
           <td class="px-6 py-4 text-xs text-slate-500 font-mono text-center">

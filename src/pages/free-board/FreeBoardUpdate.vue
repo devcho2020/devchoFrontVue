@@ -29,7 +29,6 @@
   const validationSubmit = computed(() => !(form.title.trim().length > 2 && form.content.trim().length > 9));
 
   const fnModalCancel = () => {
-    console.log('d')
     modalStore.openModal({
       title: '수정 취소',
       message: '자유게시판 내용 수정을 취소하시겠습니까?',

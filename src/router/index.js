@@ -78,11 +78,11 @@ router.beforeEach((to, from, next) => {
             confirmText: '확인',
             cancelText: '',
             type: 'alert',
-            confirm: () => {router.push(`/login?bu=${encodeURIComponent(to.fullPath)}`)},
+            confirm: null,
             cancel: null,
             outSideClose: false
         })
-        return next(false);
+        return next(`/login?bu=${encodeURIComponent(to.fullPath)}`);
     }
 
     if (!isNaN(to.meta?.level)
@@ -93,11 +93,11 @@ router.beforeEach((to, from, next) => {
             confirmText: '확인',
             cancelText: '',
             type: 'alert',
-            confirm: () => {router.push('/')},
+            confirm: null,
             cancel: null,
             outSideClose: false
         })
-        return next(false);
+        return next('/');
     }
 
     next()

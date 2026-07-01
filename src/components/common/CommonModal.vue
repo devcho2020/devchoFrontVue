@@ -3,10 +3,10 @@
   // const modalStore = useModalStore();
   // const { isShowModal, modalConfig } = storeToRefs(modalStore);
   // modalStore.openModal({
-  //   title: '권한없음',
-  //   message: '로그인 후 이용해 주세요',
+  //   title: '제목',
+  //   message: '메시지내용\n줄바꿈',
   //   confirmText: '확인',
-  //   cancelText: '',
+  //   cancelText: '취소',
   //   type: 'confirm',
   //   confirm: null,
   //   cancel: null,
