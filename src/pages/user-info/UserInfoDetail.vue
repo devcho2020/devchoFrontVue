@@ -44,6 +44,42 @@
     })
   };
 
+  const fnModalResetUserPassword = () => {
+    modalStore.openModal({
+      title: '비밀번호 초기화',
+      message: '사용자 비밀번호를 초기화 하시겠습니까?',
+      confirmText: '호기화',
+      cancelText: '취소',
+      type: 'confirm',
+      confirm: fnResetUserPassword,
+      cancel: null,
+      outSideClose: true
+    })
+  };
+
+  const fnResetUserPassword = async () => {
+      if (isLoading.value) return;
+
+      try {
+        isLoading.value = true;
+
+        await api.put(`/user-info/reset-password/${userInfoId.value}`)
+
+        modalStore.openModal({
+          title: '비밀번호 초기화',
+          message: '비밀번호가 초기화 되었습니다',
+          confirmText: '확인',
+          type: 'alert',
+          confirm: null,
+          outSideClose: true
+        })
+      } catch (e) {
+
+      } finally {
+        isLoading.value = false;
+      }
+  };
+
   const fnGetUserInfo = async () => {
       if (isLoading.value) return;
 
@@ -51,8 +87,7 @@
         isLoading.value = true;
 
         const response = await api.get(`/user-info/${userInfoId.value}`);
-        console.log(response)
-        const { userId, password, userName, position, level } = response.data
+        const { userId, userName, position, level } = response.data
 
         form.userId = userId;
         form.userName = userName;
@@ -75,6 +110,7 @@
 <template>
   <div class="flex justify-end gap-3">
     <CommonButton @click="fnMoveUserInfoList" variant="gray">목록</CommonButton>
+    <CommonButton @click="fnModalResetUserPassword" >비밀번호<br/>초기화</CommonButton>
     <CommonButton @click="fnMoveUserInfoUpdate" >수정</CommonButton>
   </div>
   <form class=" mx-auto mt-5 p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-md" onsubmit="return false;">

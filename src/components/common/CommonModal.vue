@@ -43,13 +43,13 @@
   }
 
   const fnConfirm = () => {
-    emit('confirm');
     emit('update:modelValue', false);
+    emit('confirm');
   }
 
   const fnCancel = () => {
-    emit('cancel');
     emit('update:modelValue', false);
+    emit('cancel');
   }
 </script>
 

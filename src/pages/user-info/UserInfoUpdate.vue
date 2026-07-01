@@ -79,11 +79,11 @@
     modalStore.openModal({
       title: '수정 취소',
       message: '회원 정보 수정을 취소하시겠습니까?',
-      confirmText: '목록',
+      confirmText: '취소',
       cancelText: '닫기',
       type: 'confirm',
       confirm: () => {
-        router.push({path: '/user-info', query: route.query})
+        router.push({path: `/user-info/${userInfoId.value}`, query: route.query})
       },
       cancel: null,
       outSideClose: true
@@ -185,7 +185,7 @@
       isLoading.value = true;
 
       const response = await api.get(`/user-info/${userInfoId.value}`);
-      const {userId, password, userName, position, level} = response.data
+      const {userId, userName, position, level} = response.data
 
       form.userId = userId;
       form.userName = userName;
@@ -210,7 +210,7 @@
 
 <template>
   <div class="flex justify-end gap-3">
-    <CommonButton @click="fnModalCancel" variant="gray">목록</CommonButton>
+    <CommonButton @click="fnModalCancel" variant="gray">취소</CommonButton>
     <CommonButton @click="fnModalSaveConfirm" :disabled="validationCheck">저장</CommonButton>
   </div>
   <form class=" mx-auto mt-5 p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-md" onsubmit="return false;">
