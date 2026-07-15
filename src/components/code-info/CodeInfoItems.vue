@@ -1,0 +1,78 @@
+<script setup>
+import {computed, ref} from "vue";
+
+ const props = defineProps({
+   codeInfo: Object,
+   selectedCode: String,
+   isOpen: {
+     type: Boolean,
+     default: false
+   },
+   searchValue: {
+     type: String,
+     default: ''
+   }
+ });
+
+ const childrenList = props.codeInfo?.children
+
+ const isOpen = ref(props.isOpen);
+
+ const fnHandleDblclick = () => {
+   emit('dblclick', props.codeInfo);
+ }
+
+ const emit = defineEmits(['dblclick']);
+
+ const upperCaseSearchValue = computed(() => props.searchValue.toUpperCase());
+ const fnHighLightText = (text = '') => {
+
+   const upperCaseText = text.toUpperCase();
+
+   return text.slice(0, text.indexOf(upperCaseSearchValue.value))
+       + `<span class="font-bold text-yellow-300">`
+       + text.slice(text.indexOf(upperCaseSearchValue.value), text.indexOf(upperCaseSearchValue.value) + upperCaseSearchValue.value.length)
+       + '</span>'
+       + text.slice(text.indexOf(upperCaseSearchValue.value) + upperCaseSearchValue.value.length, upperCaseText.length)
+ }
+</script>
+
+<template>
+  <details :open="isOpen"
+      class="group transition-all duration-300 text-sm">
+    <summary class="p-1 list-none"
+             @click.prevent
+             :class="childrenList.length > 0 ? 'cursor-pointer' : ''"
+             @dblclick="fnHandleDblclick"
+    >
+      <div class="flex justify-start">
+        <div class="overflow-hidden flex gap-4"
+             :class="codeInfo.code === selectedCode ? 'text-blue-600' : 'text-white'">
+          <label class="w-5 h-5  text-center text-white"
+                 :class="childrenList.length > 0 ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/20 cursor-pointer' : 'bg-slate-800 text-slate-300'"
+                 @click="() => {isOpen = !isOpen}"
+          >
+            {{ isOpen ? '-' : childrenList.length > 0 ? '+' : '-' }}
+          </label>
+          <div class="underline">
+            <span v-html="fnHighLightText(codeInfo.codeName)"></span>
+            [<span v-html="fnHighLightText(codeInfo.code)"></span>]
+          </div>
+        </div>
+        ({{ childrenList.length }})
+      </div>
+    </summary>
+    <CodeInfoItems class="ml-4"
+               v-for="subCodeInfo in childrenList"
+               :key="subCodeInfo.code"
+               :searchValue = "searchValue"
+               :selectedCode="selectedCode"
+               :codeInfo="subCodeInfo"
+               @dblclick="(subCodeInfoDetail) => emit('dblclick', subCodeInfoDetail)"
+    />
+  </details>
+</template>
+
+<style scoped>
+
+</style>

@@ -115,7 +115,7 @@
   </div>
   <form class=" mx-auto mt-5 p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-md" onsubmit="return false;">
 
-    <div class="flex flex-col gap-1 border-b pb-2 border-slate-800">
+    <div class="flex flex-col gap-1 pb-2">
       <label class="block text-lg font-medium text-slate-400 mb-1">
         <span class="ml-2 text-xs text-red-700">*</span>
         회원등급

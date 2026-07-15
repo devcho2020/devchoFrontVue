@@ -102,7 +102,7 @@
       children: defaultChildrenList('user-info', '회원 정보', '회원 정보', 1)
     },
     {
-      path: 'codes',
+      path: 'code-info',
       type: 'side',
       title: '코드관리',
       meta: {
@@ -111,8 +111,7 @@
         level: 1
       },
       level: 1,
-      component: 'RouterView',
-      children: defaultChildrenList('codes', '코드 관리', '코드 관리', 1)
+      component: 'CodeInfo',
     }
   ]
 

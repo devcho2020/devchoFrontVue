@@ -30,6 +30,7 @@ const componentsMap = {
     'UserInfoWrite': () => import('@/pages/user-info/UserInfoWrite.vue'),
     'UserInfoUpdate': () => import('@/pages/user-info/UserInfoUpdate.vue'),
     'UserInfoDetail': () => import('@/pages/user-info/UserInfoDetail.vue'),
+    'CodeInfo': () => import('@/pages/code-info/CodeInfo.vue'),
 }
 
 const commonMainMenu = COMMON_MAIN_MENU.map((cmm) => {

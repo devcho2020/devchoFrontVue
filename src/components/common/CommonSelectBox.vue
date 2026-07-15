@@ -2,10 +2,10 @@
 import {computed, onMounted} from "vue";
 
   const props =defineProps({
-    modelValue: [String, Number],
+    modelValue: [String, Number, Boolean],
     options: {
       type: Array,
-      default: []
+      default: () => ([])
     },
     disabled: {
       type: Boolean,

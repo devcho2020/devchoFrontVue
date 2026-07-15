@@ -4,11 +4,11 @@
  const props = defineProps({
    modelValue: {
      type: Array,
-     default: []
+     default: () => ([])
    },
    options: { // value, label
      type: Array,
-     default: []
+     default: () => ([])
    }
  });
 
