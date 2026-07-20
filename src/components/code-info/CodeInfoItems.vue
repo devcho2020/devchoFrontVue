@@ -4,19 +4,14 @@ import {computed, ref} from "vue";
  const props = defineProps({
    codeInfo: Object,
    selectedCode: String,
-   isOpen: {
-     type: Boolean,
-     default: false
-   },
    searchValue: {
      type: String,
      default: ''
    }
  });
 
- const childrenList = props.codeInfo?.children
-
- const isOpen = ref(props.isOpen);
+ const childrenList = props.codeInfo?.children;
+ const isOpen = ref(false);
 
  const fnHandleDblclick = () => {
    emit('dblclick', props.codeInfo);

@@ -1,7 +1,9 @@
 const regexMap = {
     userId : /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,10}$/,
     userName : /^[가-힣A-Za-z0-9\s]{2,8}$/,
-    password : /^.{4,15}$/
+    password : /^.{4,15}$/,
+    code : /^[A-Z]{4,8}$/,
+    codeName : /^[가-힣A-Za-z0-9\s]{2,10}$/
 }
 
 export const commonJS = {

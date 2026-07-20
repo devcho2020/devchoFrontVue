@@ -29,7 +29,7 @@ const props = defineProps({
   ]
 
   const searchOpt = ref('all');
-  const searchS = ref(props.searchS);
+  const modalSearchS = ref(props.searchS);
 
   const emit = defineEmits(['update:modelValue', 'confirm', 'cancel', 'click']);
 
@@ -58,10 +58,10 @@ const fnSelectedCodeInfo = (codeInfo) => {
       const response = await api.get('/code-info', {
         params: {
           selectedOption: searchOpt.value,
-          searchValue: searchS.value
+          searchValue: modalSearchS.value
         }
       });
-      searchValue.value = searchS.value;
+      searchValue.value = modalSearchS.value;
       codeInfoList.value = response.data?.codeInfoList
       codeInfoListTotal.value = response.data?.total;
     } catch (e) {
@@ -103,7 +103,7 @@ const fnSelectedCodeInfo = (codeInfo) => {
                         :options="searchOption"
                     />
                     <CommonInput
-                        v-model="searchS"
+                        v-model="modalSearchS"
                         @enter="fnGetCodeList"
                         label="검색어"
                     />

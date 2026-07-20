@@ -17,6 +17,7 @@
   const codeInfoListTotal = ref(0);
   const isShowCodeWriteModal = ref(false);
   const isShowCodeItemsModal = ref(false);
+  const searchValue = ref('');
 
   const selectCodeInfoForm = reactive({
     code: '',
@@ -51,7 +52,7 @@
     s: ''
   })
 
-  const searchValue = ref('');
+
 
   const fnParentCodeModal = () => {
     if (selectCodeInfoForm.code) {
@@ -109,8 +110,6 @@
   const fnGetCodeList = async () => {
     if (isLoading.value) return;
 
-    codeInfoList.value = [];
-
     try {
       isLoading.value = true;
       const response = await api.get('/code-info', {
@@ -120,7 +119,7 @@
         }
       });
       searchValue.value = searchParams.s;
-      codeInfoList.value = response.data?.codeInfoList || [];
+      codeInfoList.value = [...(response.data?.codeInfoList || [])];
       codeInfoListTotal.value = response.data?.total || 0;
     } catch (e) {
       console.error(e)
@@ -166,8 +165,8 @@
     </div>
     <div class="flex gap-2 mt-4 h-150">
 
-      <div class="bg-slate-900/30 rounded-xl border border-slate-800 w-2/6 p-4 max-h-150 overflow-auto">
-        <div class="sticky top-0 right-0 flex justify-end border-b border-slate-800 mb-2 bg-slate-900/90 z-10">
+      <div class="bg-slate-900/30 rounded-xl border border-slate-800 w-2/6 pl-2 pb-2 max-h-150 overflow-auto">
+        <div class="w-full min-w-max sticky top-0 left-0 pr-4 flex justify-end border-b border-slate-800 mb-2 bg-slate-900 z-10">
           <span>총 {{ codeInfoListTotal }}개</span>
         </div>
         <div class="min-w-max">
