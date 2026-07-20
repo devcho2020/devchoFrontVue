@@ -1,35 +1,47 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 
- const props = defineProps({
-   codeInfo: Object,
-   selectedCode: String,
-   searchValue: {
+  const props = defineProps({
+    codeInfo: Object,
+    selectedCode: String,
+    searchValue: {
      type: String,
      default: ''
-   }
- });
+    },
+    modalOpenCodeList: {
+      type: Array,
+      default: []
+    }
+  });
 
- const childrenList = props.codeInfo?.children;
- const isOpen = ref(false);
+  const childrenList = props.codeInfo?.children;
+  const isOpen = ref(false);
 
- const fnHandleDblclick = () => {
-   emit('dblclick', props.codeInfo);
- }
+  const fnHandleDblclick = () => {
+    emit('dblclick', props.codeInfo);
+  }
 
- const emit = defineEmits(['dblclick']);
+  const emit = defineEmits(['dblclick', 'toggleOpen']);
 
- const upperCaseSearchValue = computed(() => props.searchValue.toUpperCase());
- const fnHighLightText = (text = '') => {
+  const upperCaseSearchValue = computed(() => props.searchValue.toUpperCase());
+  const fnHighLightText = (text = '') => {
 
-   const upperCaseText = text.toUpperCase();
+  const upperCaseText = text.toUpperCase();
 
-   return text.slice(0, text.indexOf(upperCaseSearchValue.value))
-       + `<span class="font-bold text-yellow-300">`
-       + text.slice(text.indexOf(upperCaseSearchValue.value), text.indexOf(upperCaseSearchValue.value) + upperCaseSearchValue.value.length)
-       + '</span>'
-       + text.slice(text.indexOf(upperCaseSearchValue.value) + upperCaseSearchValue.value.length, upperCaseText.length)
- }
+  return text.slice(0, text.indexOf(upperCaseSearchValue.value))
+     + `<span class="font-bold text-yellow-300">`
+     + text.slice(text.indexOf(upperCaseSearchValue.value), text.indexOf(upperCaseSearchValue.value) + upperCaseSearchValue.value.length)
+     + '</span>'
+     + text.slice(text.indexOf(upperCaseSearchValue.value) + upperCaseSearchValue.value.length, upperCaseText.length)
+  }
+
+  const fnOpenCodeInfo = () => {
+    isOpen.value = !isOpen.value;
+    emit('toggleOpen', props.codeInfo.code, isOpen.value);
+  };
+  onMounted(() => {
+    isOpen.value = props.modalOpenCodeList.indexOf(props.codeInfo.code) !== -1;
+  })
 </script>
 
 <template>
@@ -45,7 +57,7 @@ import {computed, ref} from "vue";
              :class="codeInfo.code === selectedCode ? 'text-blue-600' : 'text-white'">
           <label class="w-5 h-5  text-center text-white"
                  :class="childrenList.length > 0 ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/20 cursor-pointer' : 'bg-slate-800 text-slate-300'"
-                 @click="() => {isOpen = !isOpen}"
+                 @click="fnOpenCodeInfo"
           >
             {{ isOpen ? '-' : childrenList.length > 0 ? '+' : '-' }}
           </label>
@@ -63,6 +75,8 @@ import {computed, ref} from "vue";
                :searchValue = "searchValue"
                :selectedCode="selectedCode"
                :codeInfo="subCodeInfo"
+               :modalOpenCodeList="modalOpenCodeList"
+               @toggleOpen="(code, isOpenChildren) => emit('toggleOpen', code, isOpenChildren)"
                @dblclick="(subCodeInfoDetail) => emit('dblclick', subCodeInfoDetail)"
     />
   </details>

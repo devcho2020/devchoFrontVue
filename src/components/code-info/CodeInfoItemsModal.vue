@@ -31,7 +31,7 @@ const props = defineProps({
   const searchOpt = ref('all');
   const modalSearchS = ref(props.searchS);
 
-  const emit = defineEmits(['update:modelValue', 'confirm', 'cancel', 'click']);
+  const emit = defineEmits(['update:modelValue', 'confirm', 'cancel', 'select']);
 
 const fnSelectedCodeInfo = (codeInfo) => {
   selectCodeInfoForm.code = codeInfo.code
@@ -41,7 +41,7 @@ const fnSelectedCodeInfo = (codeInfo) => {
   const fnConfirm = () => {
     if (selectCodeInfoForm != null) {
       emit('update:modelValue', false);
-      emit('click', selectCodeInfoForm);
+      emit('select', selectCodeInfoForm);
     } else {
     }
   }

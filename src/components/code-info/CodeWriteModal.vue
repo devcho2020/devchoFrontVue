@@ -10,11 +10,16 @@
   import {storeToRefs} from "pinia";
   import CommonModal from "@/components/common/CommonModal.vue";
   import {commonJS} from "@/script/common.js";
+  import CommonTextarea from "@/components/common/CommonTextarea.vue";
 
   const props = defineProps({
       modelValue: Boolean,
       selectCodeInfoForm: Object,
-      searchS: String
+      searchS: String,
+      modalOpenCodeList: {
+        type: Array,
+        default: []
+      }
     });
 
   const modalStore = useModalStore();
@@ -34,6 +39,7 @@
     parentCode: '',
     codeLevel: 0,
     codeName: '',
+    codeDesc: '',
     codeSort: 1,
     useYn: '',
   });
@@ -58,7 +64,7 @@
     codeName: {validationCheckOk: false, message: '코드명을 입력해 주세요(2~10자)'},
   })
 
-  const emit = defineEmits(['update:modelValue', 'save', 'cancel']);
+  const emit = defineEmits(['update:modelValue', 'save', 'cancel', 'toggleOpen']);
 
   const validationCheck = computed(() => {
     return !commonJS.strRegex('code', codeInput.value)
@@ -124,7 +130,7 @@
 
       modalStore.openModal({
         title: '코드 추가',
-        message: `${codeInfoForm.codeName}[${codeInfoForm.code}]\n코드 추가가 완료되었습니다`,
+        message: `${codeInfoForm.codeName}[${codeInfoForm.code}]\n코드 추가가 완료 되었습니다`,
         confirmText: '확인',
         type: 'alert',
         confirm: () => {
@@ -196,6 +202,7 @@
   const fnGetCodeList = async () => {
     if (isLoading.value) return;
 
+    codeInfoList.value = [];
     try {
       isLoading.value = true;
       const response = await api.get('/code-info', {
@@ -205,7 +212,7 @@
         }
       });
       searchValue.value = modalSearchS.value;
-      codeInfoList.value = [...(response.data?.codeInfoList || [])];
+      codeInfoList.value = response.data?.codeInfoList || [];
       codeInfoListTotal.value = response.data?.total || 0;
     } catch (e) {
       console.error(e)
@@ -275,12 +282,14 @@
                         :key="codeInfo.code"
                         :codeInfo="codeInfo"
                         :searchValue="searchValue"
+                        :modalOpenCodeList="modalOpenCodeList"
                         :selectedCode="codeInfoForm.parentCode"
+                        @toggleOpen="(code, isOpenChildren) => emit('toggleOpen', code, isOpenChildren)"
                         @dblclick="fnSetParentCode"
                     />
                   </div>
                 </div>
-                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden w-4/6 p-4">
+                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-auto w-4/6 p-4">
 
                   <div class="flex flex-col gap-2">
                     <div class="w-full flex">
@@ -382,6 +391,17 @@
                       <CommonSelectBox
                           v-model="codeInfoForm.useYn"
                           :options="useYnOption"
+                      />
+                    </div>
+                    <div class="w-full">
+                      <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">
+                        코드 설명
+                      </label>
+                      <CommonTextarea
+                          v-model="codeInfoForm.codeDesc"
+                          :rows="Number(12)"
+                          :maxLength="Number(300)"
+                          placeholder="코드에 대한 설명을 작성해 주세요"
                       />
                     </div>
                   </div>
