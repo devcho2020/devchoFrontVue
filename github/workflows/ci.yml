@@ -1,0 +1,28 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Node.js 환경 세팅 (Vue 빌드용, 본인이 쓰는 버전에 맞춰 18이나 20 등 선택)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 패키지 설치 및 빌드 테스트
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
