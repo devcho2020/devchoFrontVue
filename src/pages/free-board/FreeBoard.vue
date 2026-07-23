@@ -96,6 +96,7 @@
           <CommonInput
               v-model="searchParams.s"
               label="검색어"
+              @enter="fnSearchFreeBoardList"
           />
           <CommonButton
               variant="gray"
