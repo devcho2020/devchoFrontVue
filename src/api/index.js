@@ -4,7 +4,7 @@ import {useModalStore} from "@/stores/modal.js";
 import router from "@/router/index.js";
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     headers: {
         "Content-Type": 'application/json'
     },
