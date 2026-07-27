@@ -4,6 +4,9 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
+ARG BUILD_ENV=prod
+RUN echo "================== CURRENT BUILD_ENV: ${BUILD_ENV} =================="
+
 RUN npm run build:${BUILD_ENV}
 
 FROM nginx:alpine
