@@ -4,7 +4,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-RUN npm run build -- --mode docker
+RUN npm run build:${BUILD_ENV}
 
 FROM nginx:alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
