@@ -2,7 +2,6 @@
   import {useRoute, useRouter} from "vue-router";
   import api from "@/api/index.js";
   import {onMounted, ref} from "vue";
-  import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
   import CommonModal from "@/components/common/CommonModal.vue";
   import CommonInput from "@/components/common/CommonInput.vue";
   import CommonButton from "@/components/common/CommonButton.vue";
@@ -11,12 +10,6 @@
   import {storeToRefs} from "pinia";
   import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
   import {useAuthStore} from "@/stores/auth.js";
-
-  const areaOptions = [
-    {label:'BACKEND', value: 'BACKEND'},
-    {label:'FRONTEND', value: 'FRONTEND'},
-    {label:'DEVOPS', value: 'DEVOPS'},
-  ];
 
   const route = useRoute();
   const router = useRouter();
@@ -73,7 +66,7 @@
 </script>
 
 <template>
-  <div class="mx-auto space-y-6">
+  <div v-if="errorLog?.id" class="mx-auto space-y-6">
     <div class="flex justify-end gap-3">
       <commonButton @click="fnMoveErrorLogList" variant="gray">
         목록
@@ -112,11 +105,13 @@
 
       <div class="w-full">
         <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Area</label>
-        <commonSelectBox
-            v-model="errorLog.area"
-            :options="areaOptions"
+        <CommonInput
+            v-model="errorLog.areaCode.codeName"
+            @labelStr=""
             :disabled="true"
-            class="w-full" />
+            placeholder="asd"
+            :maxlength="Number(80)"
+        />
       </div>
 
       <div class="w-full">

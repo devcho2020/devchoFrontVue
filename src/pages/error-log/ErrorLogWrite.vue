@@ -1,6 +1,5 @@
 <script setup>
   import CommonInput from "@/components/common/CommonInput.vue";
-  import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
   import CommonButton from "@/components/common/CommonButton.vue";
   import {computed, reactive, ref} from "vue";
   import CommonTextarea from "@/components/common/CommonTextarea.vue";
@@ -9,20 +8,15 @@
   import {useRoute, useRouter} from "vue-router";
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
+  import CodeInfoChildrenList from "@/components/code-info/CodeInfoChildrenList.vue";
 
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
 
-  const areaOptions = [
-    {label:'BACKEND', value: 'BACKEND'},
-    {label:'FRONTEND', value: 'FRONTEND'},
-    {label:'DEVOPS', value: 'DEVOPS'},
-  ];
-
   const form = reactive({
     title: '',
     content: '',
-    area: areaOptions[0].value,
+    areaCode: '',
   });
 
   const route = useRoute();
@@ -112,7 +106,11 @@
 
       <div class="w-full">
         <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Area</label>
-        <commonSelectBox v-model="form.area" :options="areaOptions" class="w-full" />
+        <CodeInfoChildrenList
+            v-model="form.areaCode"
+            :isAddAll="false"
+            parentCode="OPTION_DEVAREA"
+        />
       </div>
 
       <div class="w-full">

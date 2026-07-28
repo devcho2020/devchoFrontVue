@@ -2,7 +2,6 @@
   import {useRoute, useRouter} from "vue-router";
   import api from "@/api/index.js";
   import {computed, onMounted, reactive, ref} from "vue";
-  import CommonSelectBox from "@/components/common/CommonSelectBox.vue";
   import CommonModal from "@/components/common/CommonModal.vue";
   import CommonInput from "@/components/common/CommonInput.vue";
   import CommonButton from "@/components/common/CommonButton.vue";
@@ -10,22 +9,17 @@
   import {useModalStore} from "@/stores/modal.js";
   import {storeToRefs} from "pinia";
   import {useAuthStore} from "@/stores/auth.js";
+  import CodeInfoChildrenList from "@/components/code-info/CodeInfoChildrenList.vue";
 
   const modalStore = useModalStore();
   const { isShowModal, modalConfig } = storeToRefs(modalStore);
   const authStore = useAuthStore();
   const { user: userInfo } = storeToRefs(authStore);
 
-  const areaOptions = [
-    {label:'BACKEND', value: 'BACKEND'},
-    {label:'FRONTEND', value: 'FRONTEND'},
-    {label:'DEVOPS', value: 'DEVOPS'},
-  ];
-
   const form = reactive({
     title: '',
     content: '',
-    area: '',
+    areaCode: '',
   });
 
   const route = useRoute();
@@ -35,6 +29,7 @@
 
   const isLoading = ref(false);
   const isOwner = ref(false);
+  const isCodeInfoChildrenLsitShow = ref(false);
 
 
   const fnGetErrorLogDetail = async () => {
@@ -60,13 +55,14 @@
         return;
       }
 
-      const { title, content, area } = response.data;
-      Object.assign(form, {title, content, area});
+      const { title, content, areaCode } = response.data;
+      Object.assign(form, {title, content, areaCode:areaCode?.code});
       isOwner.value = true;
     } catch (e) {
       console.error(e);
     } finally {
       isLoading.value = false;
+      isCodeInfoChildrenLsitShow.value = true;
     }
   }
 
@@ -158,10 +154,12 @@
 
       <div class="w-full">
         <label class="text-lg font-bold text-slate-400 uppercase tracking-widest">Area</label>
-        <commonSelectBox
-            v-model="form.area"
-            :options="areaOptions"
-            class="w-full" />
+        <CodeInfoChildrenList
+            v-if="isCodeInfoChildrenLsitShow"
+            v-model="form.areaCode"
+            :isAddAll="false"
+            parentCode="OPTION_DEVAREA"
+        />
       </div>
 
       <div class="w-full">

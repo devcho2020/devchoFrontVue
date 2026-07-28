@@ -1,29 +1,31 @@
 <script setup>
-import CommonButton from '/src/components/common/CommonButton.vue'
-import CommonSelectBox from '/src/components/common/CommonSelectBox.vue'
-import CommonInput from '@/components/common/CommonInput.vue'
-import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
-import CommonPagiNation from "@/components/common/CommonPagiNation.vue";
-import api from "@/api/index.js";
-import {useRoute, useRouter} from "vue-router";
-import {reactive, ref, watch} from "vue";
+  import CommonButton from '/src/components/common/CommonButton.vue'
+  import CommonSelectBox from '/src/components/common/CommonSelectBox.vue'
+  import CommonInput from '@/components/common/CommonInput.vue'
+  import CommonDateFormat from "@/components/common/CommonDateFormat.vue";
+  import CommonPagiNation from "@/components/common/CommonPagiNation.vue";
+  import api from "@/api/index.js";
+  import {useRoute, useRouter} from "vue-router";
+  import {onMounted, reactive, ref, watch} from "vue";
+  import CodeInfoChildrenList from "@/components/code-info/CodeInfoChildrenList.vue";
 
-const router = useRouter();
+  const router = useRouter();
   const route = useRoute();
 
   const searchOption = [
     {label:'제목+내용', value: 'all'},
     {label:'제목', value: 'title'},
     {label:'내용' , value: 'content'}
-  ]
-
+  ];
   const errorLogs = ref([]);
   const errorLogsTotalPage = ref(1);
   const isLoading = ref(false);
+  const isAreaLoading = ref(false);
 
   const searchParams = reactive({
     p: Number(route.query.p) || 0,
     opt: route.query.opt || 'all',
+    aopt: route.query.aopt || 'all',
     s: route.query.s || ''
   })
 
@@ -51,7 +53,7 @@ const router = useRouter();
     })
   }
 
-  const fnGetErrorLogList = async ({p = 1, opt = 'all', s = ''} = {}) => {
+  const fnGetErrorLogList = async ({p = 1, opt = 'all', aopt = 'all', s = ''} = {}) => {
     if (isLoading.value) return;
 
     try {
@@ -60,6 +62,7 @@ const router = useRouter();
         params: {
           page: p,
           size: 10,
+          searchAreaCode: aopt,
           selectedOption: opt,
           searchValue: s
         }
@@ -79,16 +82,16 @@ const router = useRouter();
 
       searchParams.p = Number(newQuery.p) || 0;
       searchParams.opt = newQuery.opt || 'all';
+      searchParams.aopt = newQuery.aopt || 'all';
       searchParams.s = newQuery.s || '';
 
         fnGetErrorLogList({
           p: searchParams.p,
           opt: searchParams.opt,
+          aopt: searchParams.aopt,
           s: searchParams.s
         });
   }, {immediate: true, deep: true})
-
-
 </script>
 
 <template>
@@ -96,6 +99,12 @@ const router = useRouter();
     <div class="flex flex-col justify-between items-center gap-4">
       <div class="flex w-full justify-between">
         <div class="flex w-2/3 gap-2 ">
+          <div>
+            <CodeInfoChildrenList
+                v-model="searchParams.aopt"
+                parentCode="OPTION_DEVAREA"
+            />
+          </div>
           <CommonSelectBox
               v-model="searchParams.opt"
               :options="searchOption" />
@@ -151,13 +160,15 @@ const router = useRouter();
             <td class="px-6 py-4 text-center">
               <span class="px-2 py-0.5   border  rounded text-[10px] font-mono"
                     :class="{
-                      'bg-blue-500/10 text-blue-400 border-blue-500/20' : errorLog.area === 'BACKEND',
-                      'bg-green-500/10 text-green-400 border-green-500/20' : errorLog.area === 'FRONTEND',
-                      'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : errorLog.area === 'DEVOPS',
-                      'bg-red-500/10 text-red-400 border-red-500/20' : errorLog.area === 'MOBILE'
+                      'bg-blue-500/10 text-blue-400 border-blue-500/20' : errorLog.areaCode?.codeName === 'BACKEND',
+                      'bg-green-500/10 text-green-400 border-green-500/20' : errorLog.areaCode?.codeName === 'FRONTEND',
+                      'bg-purple-500/10 text-purple-400 border-purple-500/20' : errorLog.areaCode?.codeName === 'FULLSTACK',
+                      'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : errorLog.areaCode?.codeName === 'DATA BASE',
+                      'bg-orange-500/10 text-orange-400 border-orange-500/20' : errorLog.areaCode?.codeName === 'UIUX',
+                      'bg-white-500/10 text-white-400 border-white-500/20' : errorLog.areaCode?.codeName === 'DEVOPS',
                     }"
               >
-                {{ errorLog.area }}
+                {{ errorLog.areaCode?.codeName }}
               </span>
             </td>
             <td class="px-6 py-4 text-xs text-slate-500 font-mono text-center">
