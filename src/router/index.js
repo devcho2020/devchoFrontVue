@@ -14,6 +14,7 @@ const componentsMap = {
     'Login': () => import('@/pages/Login.vue'),
     'UserJoin': () => import('@/pages/UserJoin.vue'),
     'Profile': () => import('@/pages/Profile.vue'),
+    'Schedule': () => import('@/pages/Schedule.vue'),
     'FreeBoard': () => import('@/pages/free-board/FreeBoard.vue'),
     'FreeBoardWrite': () => import('@/pages/free-board/FreeBoardWrite.vue'),
     'FreeBoardUpdate': () => import('@/pages/free-board/FreeBoardUpdate.vue'),

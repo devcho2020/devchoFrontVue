@@ -71,6 +71,17 @@
       },
       level: 9,
       component: 'Profile'
+    },{
+      path: 'schedule',
+      type: 'side',
+      title: '스케줄 설정',
+      meta: {
+        title: '스케줄 설정',
+        requiresAuth: false,
+        level: 9,
+      },
+      level: 9,
+      component: 'Schedule'
     },
     {
       path: 'free-board',
